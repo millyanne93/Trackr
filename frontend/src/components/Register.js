@@ -26,19 +26,23 @@ const Register = () => {
 
     try {
       // Send the form data to your backend server
-      const response = await axios.post('/api/register', formData);
+      console.log('Sending registration data:', formData);
+      const response = await axios.post('http://localhost:5000/api/register', formData);
 
       // Handle success
-      if (response.status === 200) {
+      if (response.status === 201) {  // Note: changed to 201 for created status
         setSuccess('Registration successful! Please log in.');
         setFormData({ username: '', password: '', role: 'user' }); // Clear form
+        setError('');  // Clear any previous errors
+      } else {
+        setError('Registration failed. Please try again.');
       }
     } catch (err) {
-      // Handle error
+      console.error('Registration error:', err);  // Log the error for debugging
       if (err.response && err.response.data) {
         setError(err.response.data.message || 'Registration failed.');
       } else {
-        setError('An error occurred.');
+        setError('An error occurred. Please check your connection.');
       }
     }
   };

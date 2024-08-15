@@ -27,7 +27,7 @@ const Login = () => {
 
     try {
       // Send login request to backend
-      const response = await axios.post('/api/login', formData);
+      const response = await axios.post('http://localhost:5000/api/login', formData);
 
       // Handle success
       if (response.status === 200) {
