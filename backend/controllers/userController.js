@@ -5,6 +5,19 @@ const jwt = require('jsonwebtoken');
 exports.registerUser = async (req, res) => {
   try {
     const { username, password } = req.body;
+
+    // Basic validation
+    if (!username || !password) {
+      return res.status(400).json({ message: 'Username and password are required.' });
+    }
+
+    // Check if the user already exists
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      return res.status(400).json({ message: 'Username is already taken.' });
+    }
+
+    // Create a new user
     let user = new User({ username, password });
     await user.save();
 
@@ -12,9 +25,17 @@ exports.registerUser = async (req, res) => {
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
+
     res.status(201).json({ token, user });
   } catch (err) {
-    res.status(500).send(err.message);
+    // Differentiate between validation errors and server errors
+    if (err.name === 'ValidationError') {
+      return res.status(400).json({ message: 'Validation error: ' + err.message });
+    } else if (err.code === 11000) { // MongoDB duplicate key error
+      return res.status(400).json({ message: 'Username already exists.' });
+    } else {
+      return res.status(500).json({ message: 'Registration failed. Please try again.' });
+    }
   }
 };
 
