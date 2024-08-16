@@ -17,4 +17,7 @@ router.post('/login', userController.loginUser);
 router.get('/users', authMiddleware, userController.getAllUsers);
 router.delete('/users/:id', authMiddleware, userController.deleteUser);
 
+// Logout route
+router.post('/logout', userController.logoutUser);
+
 module.exports = router;

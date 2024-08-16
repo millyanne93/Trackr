@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // For redirection after login
+import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -9,7 +9,7 @@ const Login = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const navigate = useNavigate(); // Hook for navigation
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -19,25 +19,25 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic client-side validation
     if (!formData.username || !formData.password) {
       setError('Username and password are required.');
       return;
     }
 
     try {
-      // Send login request to backend
       const response = await axios.post('http://localhost:5000/api/login', formData);
 
-      // Handle success
       if (response.status === 200) {
-        // Assuming the backend sends a token or user info
-        localStorage.setItem('authToken', response.data.token); // Save token in local storage
-        setSuccess('Login successful!');
-        navigate('/dashboard'); // Redirect to the dashboard or home page
+        localStorage.setItem('authToken', response.data.token);
+        const userRole = response.data.user.role;
+
+        if (userRole === 'admin') {
+          navigate('/admin-home');
+        } else {
+          navigate('/user-home');
+        }
       }
     } catch (err) {
-      // Handle error
       if (err.response && err.response.data) {
         setError(err.response.data.message || 'Login failed.');
       } else {

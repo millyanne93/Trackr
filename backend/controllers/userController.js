@@ -80,3 +80,7 @@ exports.deleteUser = async (req, res) => {
     res.status(500).send(err.message);
   }
 };
+const logoutUser = (req, res) => {
+  // Invalidate the token (client-side will handle token removal)
+  res.status(200).json({ message: 'Logged out successfully' });
+};
