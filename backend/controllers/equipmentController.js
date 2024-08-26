@@ -29,8 +29,8 @@ exports.createEquipment = async (req, res) => {
     const newEquipment = new Equipment(req.body);
     await newEquipment.save();
     res.status(201).json(newEquipment);
-  } catch (err) {
-    res.status(500).send(err.message);
+  } catch (error) {
+    res.status(400).json({ message: 'Error adding equipment', error });
   }
 };
 

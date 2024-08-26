@@ -26,12 +26,17 @@ const Login = () => {
 
     try {
       const response = await axios.post('http://localhost:5000/api/login', formData);
+      const { role, token, username } = response.data.user; // Extract username
+
+      console.log('Role received:', role);  // Debugging line
 
       if (response.status === 200) {
-        localStorage.setItem('authToken', response.data.token);
-        const userRole = response.data.user.role;
+        setSuccess('Login successful!');
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('role', role); // Store role in localStorage
+        localStorage.setItem('userName', username); // Store username in localStorage
 
-        if (userRole === 'admin') {
+        if (role === 'admin') {
           navigate('/admin-home');
         } else {
           navigate('/user-home');
