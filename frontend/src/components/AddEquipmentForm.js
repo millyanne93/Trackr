@@ -1,34 +1,57 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import api from '../services/api';
 
-const AddEquipmentForm = ({ onSubmit }) => {
-  console.log('AddEquipmentForm is rendering');
-  console.log('onSubmit prop:', onSubmit); // Debugging line
-
+const AddEquipmentForm = () => {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [serialNumber, setSerialNumber] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
 
-    const newEquipment = { name, description, serialNumber, status: 'available' };
+    const newEquipment = {
+      name,
+      description,
+      serialNumber
+    };
 
-    // Validate onSubmit before calling
-    if (typeof onSubmit === 'function') {
-      onSubmit(newEquipment);
-    } else {
-      console.error('onSubmit is not a function:', onSubmit);
+    // Log the data being sent
+    console.log('Sending data:', newEquipment);
+
+    try {
+      const response = await api.post('/equipment', newEquipment);
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok.');
+      }
+
+      // Handle successful response
+      const data = await response.json();
+      console.log('Response data:', data);
+      setSuccess('Equipment added successfully!');
+      setError('');
+      // Clear the form fields
+      setName('');
+      setDescription('');
+      setSerialNumber('');
+    } catch (error) {
+      // Handle error
+      console.error('Error:', error);
+      setError(`Failed to add equipment: ${error.message}`);
+      setSuccess('');
     }
-
-    setName('');
-    setDescription('');
-    setSerialNumber('');
   };
 
   return (
     <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow">
       <h3 className="text-xl font-semibold mb-4">Add New Equipment</h3>
+
+      {/* Display success or error messages */}
+      {success && <p className="text-green-600">{success}</p>}
+      {error && <p className="text-red-600">{error}</p>}
+
       <div className="mb-4">
         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="name">
           Equipment Name
@@ -75,11 +98,6 @@ const AddEquipmentForm = ({ onSubmit }) => {
       </button>
     </form>
   );
-};
-
-// Define prop types
-AddEquipmentForm.propTypes = {
-  onSubmit: PropTypes.func.isRequired,
 };
 
 export default AddEquipmentForm;

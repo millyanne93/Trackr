@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie'; // Import Cookies to manage token
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -26,13 +27,13 @@ const Login = () => {
 
     try {
       const response = await axios.post('http://localhost:5000/api/login', formData);
-      const { role, token, username } = response.data.user; // Extract username
+      const { role, token, username } = response.data.user;
 
-      console.log('Role received:', role);  // Debugging line
+      console.log('Token received:', token); // Log the token to verify it's received
 
       if (response.status === 200) {
         setSuccess('Login successful!');
-        localStorage.setItem('authToken', token);
+        Cookies.set('token', token, { expires: 1}); // Store token in cookies
         localStorage.setItem('role', role); // Store role in localStorage
         localStorage.setItem('userName', username); // Store username in localStorage
 

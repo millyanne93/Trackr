@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import api from '../services/api'; // Import your custom API instance
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import LogoutButton from '../components/LogoutButton';
@@ -13,25 +13,7 @@ const AdminHomePage = ({
 }) => {
   const [equipmentList, setEquipmentList] = useState([]);
 
-  const handleAddEquipment = async (newEquipment) => {
-
-    try {
-      const response = await api.post('/equipment', newEquipment); // Use the custom API instance
-      if (response.status === 200) {
-        const savedEquipment = response.data;
-        setEquipmentList((prevList) => [...prevList, savedEquipment]);
-        console.log('Equipment added successfully!');
-      } else {
-        console.error('Failed to add equipment');
-      }
-    } catch (error) {
-      console.error('Error adding equipment:', error.message);
-    }
-  };
-
-  // Debugging statements
-  console.log('AdminHomePage is rendering');
-  console.log('handleAddEquipment:', handleAddEquipment); // Ensure this logs a function
+  // You can remove the handleAddEquipment function here
 
   return (
     <div className="p-6">
@@ -98,7 +80,7 @@ const AdminHomePage = ({
       </div>
 
       {/* Add Equipment Form */}
-      <AddEquipmentForm onSubmit={handleAddEquipment} />
+      <AddEquipmentForm /> {/* No need for onSubmit prop */}
 
       {/* Usage of equipmentList */}
       <div className="bg-white p-4 rounded shadow mb-6">

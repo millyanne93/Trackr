@@ -6,33 +6,27 @@ exports.registerUser = async (req, res) => {
   try {
     const { username, password, role } = req.body;
 
-    // Basic validation
     if (!username || !password) {
       return res.status(400).json({ message: 'Username and password are required.' });
     }
 
-    // Check if the user already exists
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ message: 'Username is already taken.' });
     }
 
-    // Create a new user
     let user = new User({ username, password, role });
     await user.save();
 
-    // Generate JWT
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    // Generate JWT token using the model method
+    const token = await user.generateAuthToken();
 
-    // Include the role in the response
     res.status(201).json({
       token,
       user: {
         _id: user._id,
         username: user.username,
-        role: user.role,  // Role is included here
+        role: user.role,
       }
     });
   } catch (err) {
@@ -56,18 +50,14 @@ exports.loginUser = async (req, res) => {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Generate JWT
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    const token = await user.generateAuthToken();
 
-    // Include the role in the response
     res.json({
       token,
       user: {
         _id: user._id,
         username: user.username,
-        role: user.role,  // Role is included here
+        role: user.role,
       }
     });
   } catch (err) {

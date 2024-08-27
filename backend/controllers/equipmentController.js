@@ -6,7 +6,8 @@ exports.getAllEquipment = async (req, res) => {
     const equipment = await Equipment.find();
     res.json(equipment);
   } catch (err) {
-    res.status(500).send(err.message);
+    console.error('Error fetching all equipment:', err); // Log the error
+    res.status(500).send('Server error');
   }
 };
 
@@ -19,18 +20,30 @@ exports.getEquipmentById = async (req, res) => {
     }
     res.json(equipment);
   } catch (err) {
-    res.status(500).send(err.message);
+    console.error('Error fetching equipment by ID:', err); // Log the error
+    res.status(500).send('Server error');
   }
 };
 
 // Create new equipment
 exports.createEquipment = async (req, res) => {
   try {
+    console.log('Received data for new equipment:', req.body); // Log the received data
+
     const newEquipment = new Equipment(req.body);
     await newEquipment.save();
+
+    console.log('Equipment created successfully:', newEquipment); // Log success
     res.status(201).json(newEquipment);
   } catch (error) {
-    res.status(400).json({ message: 'Error adding equipment', error });
+    console.error('Error creating equipment:', error); // Log the error
+    if (error.name === 'ValidationError') {
+      // Mongoose validation error
+      res.status(400).json({ message: 'Validation error', error: error.message });
+    } else {
+      // General server error
+      res.status(500).json({ message: 'Server error', error: error.message });
+    }
   }
 };
 
@@ -41,9 +54,11 @@ exports.updateEquipment = async (req, res) => {
     if (!updatedEquipment) {
       return res.status(404).json({ message: 'Equipment not found' });
     }
+    console.log('Equipment updated successfully:', updatedEquipment); // Log success
     res.json(updatedEquipment);
   } catch (err) {
-    res.status(500).send(err.message);
+    console.error('Error updating equipment:', err); // Log the error
+    res.status(500).send('Server error');
   }
 };
 
@@ -54,8 +69,10 @@ exports.deleteEquipment = async (req, res) => {
     if (!deletedEquipment) {
       return res.status(404).json({ message: 'Equipment not found' });
     }
+    console.log('Equipment deleted successfully:', deletedEquipment); // Log success
     res.json({ message: 'Equipment deleted successfully' });
   } catch (err) {
-    res.status(500).send(err.message);
+    console.error('Error deleting equipment:', err); // Log the error
+    res.status(500).send('Server error');
   }
 };
