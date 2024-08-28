@@ -13,6 +13,11 @@ router.post('/equipment', authMiddleware, isAdmin, equipmentController.createEqu
 router.put('/equipment/:id', authMiddleware, isAdmin, equipmentController.updateEquipment);
 router.delete('/equipment/:id', authMiddleware, isAdmin, equipmentController.deleteEquipment);
 
+// New routes added
+router.get('/summary', authMiddleware, isAdmin, equipmentController.getSummary);
+router.get('/activity', authMiddleware, isAdmin, equipmentController.getActivity);
+router.get('/equipment/issued', authMiddleware, equipmentController.getIssuedEquipment);
+
 router.post('/register', userController.registerUser);
 router.post('/login', userController.loginUser);
 router.get('/users', authMiddleware, userController.getAllUsers);

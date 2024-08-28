@@ -1,19 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import api from '../services/api'; // Import your custom API instance
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import LogoutButton from '../components/LogoutButton';
 import AddEquipmentForm from '../components/AddEquipmentForm';
 
-const AdminHomePage = ({
-  summaryData = {},
-  activityData = [],
-  issuedEquipment = [],
-  users = [],
-  username = 'Admin',
-}) => {
+const AdminHomePage = () => {
+  const [summaryData, setSummaryData] = useState({});
+  const [activityData, setActivityData] = useState([]);
+  const [issuedEquipment, setIssuedEquipment] = useState([]);
   const [equipmentList, setEquipmentList] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [username, setUsername] = useState('Admin');
+  const [loading, setLoading] = useState(true);
 
-  // You can remove the handleAddEquipment function here
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [summaryRes, activityRes, issuedEquipmentRes, equipmentRes, usersRes] = await Promise.all([
+          api.get('/summary'), // Replace with your actual endpoint
+          api.get('/activity'), // Replace with your actual endpoint
+          api.get('/equipment/issued'), // Replace with your actual endpoint
+          api.get('/equipment'), // Replace with your actual endpoint
+          api.get('/users'), // Replace with your actual endpoint
+        ]);
+
+        setSummaryData(summaryRes.data);
+        setActivityData(activityRes.data);
+        setIssuedEquipment(issuedEquipmentRes.data);
+        setEquipmentList(equipmentRes.data);
+        setUsers(usersRes.data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="p-6">
@@ -80,7 +108,7 @@ const AdminHomePage = ({
       </div>
 
       {/* Add Equipment Form */}
-      <AddEquipmentForm /> {/* No need for onSubmit prop */}
+      <AddEquipmentForm setEquipmentList={setEquipmentList} /> {/* Pass the setter as a prop */}
 
       {/* Usage of equipmentList */}
       <div className="bg-white p-4 rounded shadow mb-6">
