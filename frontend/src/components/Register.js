@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie'; // Import Cookies to manage token
+import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -9,6 +11,7 @@ const Register = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -18,27 +21,41 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Basic client-side validation
     if (!formData.username || !formData.password) {
       setError('Username and password are required.');
       return;
     }
 
     try {
-      // Send the form data to your backend server
-      console.log('Sending registration data:', formData);
       const response = await axios.post('http://localhost:5000/api/register', formData);
 
-      // Handle success
-      if (response.status === 201) {  // Note: changed to 201 for created status
-        setSuccess('Registration successful! Please log in.');
-        setFormData({ username: '', password: '', role: 'user' }); // Clear form
-        setError('');  // Clear any previous errors
+      if (response.status === 201) {
+        setSuccess('Registration successful!');
+        setFormData({ username: '', password: '', role: 'user' });
+        setError('');
+
+        // Store token in cookies
+        const { token } = response.data;
+        if (token) {
+          Cookies.set('token', token, { expires: 1 }); // Store token in cookies for 1 day
+        }
+
+        // Store additional user info
+        const { role, username } = response.data.user;
+        localStorage.setItem('role', role);
+        localStorage.setItem('userName', username);
+
+        // Redirect user based on role or to a default page
+        if (role === 'admin') {
+          navigate('/admin-home');
+        } else {
+          navigate('/user-home');
+        }
       } else {
         setError('Registration failed. Please try again.');
       }
     } catch (err) {
-      console.error('Registration error:', err);  // Log the error for debugging
+      console.error('Registration error:', err);
       if (err.response && err.response.data) {
         setError(err.response.data.message || 'Registration failed.');
       } else {

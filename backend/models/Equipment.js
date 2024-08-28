@@ -9,3 +9,5 @@ const equipmentSchema = new mongoose.Schema({
   checkedOutAt: { type: Date },
   imageUrl: { type: String }
 });
+
+module.exports = mongoose.model('Equipment', equipmentSchema);

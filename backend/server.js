@@ -6,14 +6,20 @@ const cors = require('cors');
 const apiRoutes = require('./routes/api');
 const adminRoutes = require('./routes/adminRoutes');
 
-
 const app = express();
 
 // Connect to the database
 connectDB();
 
+// Configure CORS
+const corsOptions = {
+  origin: 'http://localhost:3000', // Replace with the URL of your frontend app
+  credentials: true // Allow cookies and authentication headers
+};
+
+app.use(cors(corsOptions));
+
 // Middleware
-app.use(cors());
 app.use(bodyParser.json());
 
 // Routes
