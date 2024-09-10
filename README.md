@@ -5,8 +5,8 @@ This project aims to develop a web-based equipment tracking system to manage the
 
 - Register equipment details
 - Track equipment check-in and check-out processes
-- View real-time equipment location (optional)
-- Generate reports on equipment usage (optional)
+- View real-time equipment location
+- Generate reports on equipment usage
 
 ## Technologies
 - **Backend:** Node.js (Express)
