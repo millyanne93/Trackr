@@ -27,7 +27,8 @@ const Login = () => {
 
     try {
       const response = await axios.post('http://localhost:5000/api/login', formData);
-      const { role, token, username } = response.data.user;
+      const { token, user } = response.data;
+      const { role, username } = user;
 
       console.log('Token received:', token); // Log the token to verify it's received
 
