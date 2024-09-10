@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import api from '../services/api'; // Import your custom API instance
+import api from '../services/api';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import LogoutButton from '../components/LogoutButton';
 import AddEquipmentForm from '../components/AddEquipmentForm';
@@ -13,15 +13,22 @@ const AdminHomePage = () => {
   const [username, setUsername] = useState('Admin');
   const [loading, setLoading] = useState(true);
 
+  // State to control the visibility of each section, all set to false initially
+  const [showSummary, setShowSummary] = useState(false);
+  const [showActivity, setShowActivity] = useState(false);
+  const [showIssuedEquipment, setShowIssuedEquipment] = useState(false);
+  const [showAddEquipment, setShowAddEquipment] = useState(false);
+  const [showUserManagement, setShowUserManagement] = useState(false);
+
   useEffect(() => {
     const fetchData = async () => {
       try {
         const [summaryRes, activityRes, issuedEquipmentRes, equipmentRes, usersRes] = await Promise.all([
-          api.get('/summary'), // Replace with your actual endpoint
-          api.get('/activity'), // Replace with your actual endpoint
-          api.get('/equipment/issued'), // Replace with your actual endpoint
-          api.get('/equipment'), // Replace with your actual endpoint
-          api.get('/users'), // Replace with your actual endpoint
+          api.get('/summary'),
+          api.get('/activity'),
+          api.get('/equipment/issued'),
+          api.get('/equipment'),
+          api.get('/users'),
         ]);
 
         setSummaryData(summaryRes.data);
@@ -50,93 +57,132 @@ const AdminHomePage = () => {
 
       {/* Summary Section */}
       <div className="bg-white p-4 rounded shadow mb-6">
-        <h3 className="text-xl font-semibold">Summary</h3>
-        <ul>
-          <li>Total Users: {summaryData.totalUsers ?? 'Loading...'}</li>
-          <li>Total Equipment: {summaryData.totalEquipment ?? 'Loading...'}</li>
-          <li>Equipment Issued: {summaryData.totalIssued ?? 'Loading...'}</li>
-        </ul>
+        <h3
+          className="text-xl font-semibold cursor-pointer"
+          onClick={() => setShowSummary(!showSummary)}
+        >
+          Summary
+        </h3>
+        {showSummary && (
+          <ul>
+            <li>Total Users: {summaryData.totalUsers ?? 'Loading...'}</li>
+            <li>Total Equipment: {summaryData.totalEquipment ?? 'Loading...'}</li>
+            <li>Equipment Issued: {summaryData.totalIssued ?? 'Loading...'}</li>
+          </ul>
+        )}
       </div>
 
       {/* Activity Overview */}
       <div className="bg-white p-4 rounded shadow mb-6">
-        <h3 className="text-xl font-semibold">Activity Overview</h3>
-        {activityData.length > 0 ? (
-          <LineChart width={500} height={300} data={activityData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line type="monotone" dataKey="users" stroke="#8884d8" />
-            <Line type="monotone" dataKey="equipment" stroke="#82ca9d" />
-          </LineChart>
-        ) : (
-          <p>No activity data available.</p>
+        <h3
+          className="text-xl font-semibold cursor-pointer"
+          onClick={() => setShowActivity(!showActivity)}
+        >
+          Activity Overview
+        </h3>
+        {showActivity && (
+          activityData.length > 0 ? (
+            <LineChart width={500} height={300} data={activityData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Line type="monotone" dataKey="users" stroke="#8884d8" />
+              <Line type="monotone" dataKey="equipment" stroke="#82ca9d" />
+            </LineChart>
+          ) : (
+            <p>No activity data available.</p>
+          )
         )}
       </div>
 
       {/* Equipment Issued Section */}
       <div className="bg-white p-4 rounded shadow mb-6">
-        <h3 className="text-xl font-semibold">Equipment Issued</h3>
-        {issuedEquipment.length > 0 ? (
-          <table className="min-w-full bg-white">
-            <thead>
-              <tr>
-                <th className="py-2">Equipment Name</th>
-                <th className="py-2">Issued To</th>
-                <th className="py-2">Issued Date</th>
-                <th className="py-2">Return Date</th>
-                <th className="py-2">Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              {issuedEquipment.map((item, index) => (
-                <tr key={index}>
-                  <td className="py-2">{item.name}</td>
-                  <td className="py-2">{item.issuedTo}</td>
-                  <td className="py-2">{item.issuedDate}</td>
-                  <td className="py-2">{item.returnDate}</td>
-                  <td className="py-2">{item.status}</td>
+        <h3
+          className="text-xl font-semibold cursor-pointer"
+          onClick={() => setShowIssuedEquipment(!showIssuedEquipment)}
+        >
+          Equipment Issued
+        </h3>
+        {showIssuedEquipment && (
+          issuedEquipment.length > 0 ? (
+            <table className="min-w-full bg-white">
+              <thead>
+                <tr>
+                  <th className="py-2">Equipment Name</th>
+                  <th className="py-2">Issued To</th>
+                  <th className="py-2">Issued Date</th>
+                  <th className="py-2">Return Date</th>
+                  <th className="py-2">Status</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        ) : (
-          <p>No equipment issued.</p>
+              </thead>
+              <tbody>
+                {issuedEquipment.map((item, index) => (
+                  <tr key={index}>
+                    <td className="py-2">{item.name}</td>
+                    <td className="py-2">{item.issuedTo}</td>
+                    <td className="py-2">{item.issuedDate}</td>
+                    <td className="py-2">{item.returnDate}</td>
+                    <td className="py-2">{item.status}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No equipment issued.</p>
+          )
         )}
       </div>
 
       {/* Add Equipment Form */}
-      <AddEquipmentForm setEquipmentList={setEquipmentList} /> {/* Pass the setter as a prop */}
-
-      {/* Usage of equipmentList */}
       <div className="bg-white p-4 rounded shadow mb-6">
-        <h3 className="text-xl font-semibold">Added Equipment</h3>
-        {equipmentList.length > 0 ? (
-          <ul>
-            {equipmentList.map((equipment, index) => (
-              <li key={index}>{equipment.name}</li>
-            ))}
-          </ul>
-        ) : (
-          <p>No equipment added yet.</p>
+        <h3
+          className="text-xl font-semibold cursor-pointer"
+          onClick={() => setShowAddEquipment(!showAddEquipment)}
+        >
+          Add Equipment
+        </h3>
+        {showAddEquipment && (
+          <>
+            <AddEquipmentForm setEquipmentList={setEquipmentList} /> {/* Pass the setter as a prop */}
+            {/* Usage of equipmentList */}
+            <div className="mt-4">
+              <h4 className="text-lg font-semibold">Added Equipment</h4>
+              {equipmentList.length > 0 ? (
+                <ul>
+                  {equipmentList.map((equipment, index) => (
+                    <li key={index}>{equipment.name}</li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No equipment added yet.</p>
+              )}
+            </div>
+          </>
         )}
       </div>
 
       {/* User Management Section */}
       <div className="bg-white p-4 rounded shadow">
-        <h3 className="text-xl font-semibold">User Management</h3>
-        {users.length > 0 ? (
-          <ul>
-            {users.map((user, index) => (
-              <li key={index}>
-                {user.name} - {user.email}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p>No users found.</p>
+        <h3
+          className="text-xl font-semibold cursor-pointer"
+          onClick={() => setShowUserManagement(!showUserManagement)}
+        >
+          User Management
+        </h3>
+        {showUserManagement && (
+          users.length > 0 ? (
+            <ul>
+              {users.map((user, index) => (
+                <li key={index}>
+                  {user.name} - {user.email}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No users found.</p>
+          )
         )}
       </div>
     </div>

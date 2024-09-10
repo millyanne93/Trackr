@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import Cookies from 'js-cookie'; // Import Cookies to manage token
+import Cookies from 'js-cookie';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -33,7 +33,7 @@ const Login = () => {
 
       if (response.status === 200) {
         setSuccess('Login successful!');
-        Cookies.set('token', token, { expires: 1}); // Store token in cookies
+        Cookies.set('token', token, { expires: 1 }); // Store token in cookies
         localStorage.setItem('role', role); // Store role in localStorage
         localStorage.setItem('userName', username); // Store username in localStorage
 
@@ -44,11 +44,8 @@ const Login = () => {
         }
       }
     } catch (err) {
-      if (err.response && err.response.data) {
-        setError(err.response.data.message || 'Login failed.');
-      } else {
-        setError('An error occurred.');
-      }
+      console.error('Login error:', err);
+      setError(err.response?.data?.message || 'Login failed.');
     }
   };
 
