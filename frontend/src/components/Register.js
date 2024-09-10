@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Cookies from 'js-cookie'; // Import Cookies to manage token
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for redirection
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -11,7 +11,7 @@ const Register = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,37 +30,24 @@ const Register = () => {
       const response = await axios.post('http://localhost:5000/api/register', formData);
 
       if (response.status === 201) {
+      const { token } = response.data; // Extract the token from response
+
+       // If token exists, store it in cookies
+       if (token) {
+         Cookies.set('token', token, { expires: 1 }); // Token will be stored in cookies for 1 day
+       }
+
         setSuccess('Registration successful!');
         setFormData({ username: '', password: '', role: 'user' });
         setError('');
 
-        // Store token in cookies
-        const { token } = response.data;
-        if (token) {
-          Cookies.set('token', token, { expires: 1 }); // Store token in cookies for 1 day
-        }
-
-        // Store additional user info
-        const { role, username } = response.data.user;
-        localStorage.setItem('role', role);
-        localStorage.setItem('userName', username);
-
-        // Redirect user based on role or to a default page
-        if (role === 'admin') {
-          navigate('/admin-home');
-        } else {
-          navigate('/user-home');
-        }
+        navigate('/login');
       } else {
         setError('Registration failed. Please try again.');
       }
     } catch (err) {
       console.error('Registration error:', err);
-      if (err.response && err.response.data) {
-        setError(err.response.data.message || 'Registration failed.');
-      } else {
-        setError('An error occurred. Please check your connection.');
-      }
+      setError(err.response?.data?.message || 'Registration failed.');
     }
   };
 

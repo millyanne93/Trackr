@@ -35,7 +35,6 @@ api.interceptors.response.use(
         Cookies.remove('token');
         localStorage.removeItem('userData');
 
-        // Delay the redirect to allow time for error observation
         setTimeout(() => {
           window.location.href = '/'; // Redirect to login or home page
         }, 3000); // 3-second delay
