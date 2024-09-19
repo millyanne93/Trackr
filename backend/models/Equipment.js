@@ -5,7 +5,7 @@ const equipmentSchema = new mongoose.Schema({
   description: { type: String },
   serialNumber: { type: String, unique: true },
   status: { type: String, default: 'available' },
-  checkedOutBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  checkedOutBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   checkedOutAt: { type: Date },
   imageUrl: { type: String }
 });

@@ -1,4 +1,6 @@
 const Equipment = require('../models/Equipment');
+const User = require('../models/User');
+const mongoose = require('mongoose');
 
 // Get all equipment
 exports.getAllEquipment = async (req, res) => {
@@ -13,22 +15,22 @@ exports.getAllEquipment = async (req, res) => {
 
 // Get a single piece of equipment by ID
 exports.getEquipmentById = async (req, res) => {
-  try {
-    // Check if the ID parameter is "issued"
-    if (req.params.id === "issued") {
-      const issuedEquipment = await Equipment.find({ status: "issued" });
-      return res.json(issuedEquipment);
-    }
+  const equipmentId = req.params.id;
 
-    // Otherwise, treat it as an ObjectId and find by ID
-    const equipment = await Equipment.findById(req.params.id);
+  // Check if the equipmentId is a valid ObjectId
+  if (!mongoose.Types.ObjectId.isValid(equipmentId)) {
+    return res.status(400).json({ message: 'Invalid equipment ID' });
+  }
+
+  try {
+    const equipment = await Equipment.findById(equipmentId);
     if (!equipment) {
       return res.status(404).json({ message: 'Equipment not found' });
     }
-    res.json(equipment);
-  } catch (err) {
-    console.error('Error fetching equipment by ID:', err); // Log the error
-    res.status(500).send('Server error');
+    res.status(200).json({ equipment });
+  } catch (error) {
+    console.error('Error fetching equipment by ID:', error);
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
@@ -119,5 +121,89 @@ exports.getIssuedEquipment = async (req, res) => {
   } catch (err) {
     console.error('Error fetching issued equipment:', err);
     res.status(500).send('Server error');
+  }
+};
+
+// Assign equipment to a user
+exports.assignEquipment = async (req, res) => {
+  const { equipmentId, userId } = req.body;
+
+  if (!mongoose.Types.ObjectId.isValid(equipmentId) || !mongoose.Types.ObjectId.isValid(userId)) {
+    return res.status(400).json({ message: 'Invalid equipment or user ID' });
+  }
+
+  try {
+    const equipment = await Equipment.findById(equipmentId);
+    const user = await User.findById(userId);
+
+    if (!equipment || !user) {
+      return res.status(404).json({ message: 'Equipment or User not found' });
+    }
+
+    if (equipment.status === 'issued') {
+      return res.status(400).json({ message: 'Equipment is already issued' });
+    }
+
+    // Assign the equipment to the user
+    equipment.checkedOutBy = user._id;
+    equipment.checkedOutAt = new Date();
+    equipment.status = 'issued';
+
+    await equipment.save();
+
+    // Populate 'checkedOutBy' field
+    const populatedEquipment = await equipment.populate('checkedOutBy', 'username');
+
+    res.status(200).json({
+      message: 'Equipment assigned successfully',
+      equipment: populatedEquipment
+    });
+  } catch (error) {
+    console.error('Error assigning equipment:', error);
+    res.status(500).json({ message: 'Error assigning equipment', error });
+  }
+};
+
+
+exports.getAssignedEquipment = async (req, res) => {
+  try {
+    const userId = req.user && req.user._id ? req.user._id : null;
+
+    if (!userId) {
+      return res.status(400).json({ message: 'User not authenticated' });
+    }
+
+    const objectId = new mongoose.Types.ObjectId(userId);
+    console.log("User ID from token:", objectId);
+
+    const assignedEquipment = await Equipment.find({ checkedOutBy: objectId });
+    console.log("Assigned equipment:", assignedEquipment);
+
+    // Instead of sending a 404, return an empty list if no equipment is assigned
+    res.status(200).json({ equipment: assignedEquipment || [] });
+  } catch (error) {
+    console.error('Error fetching assigned equipment:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+exports.returnEquipment = async (req, res) => {
+  try {
+    const equipment = await Equipment.findById(req.params.id);
+    // Check if equipment exists and is assigned to the current user
+    if (!equipment || equipment.issuedTo.toString() !== req.user._id.toString()) {
+      return res.status(404).json({ message: 'Equipment not found or not assigned to this user' });
+    }
+    
+    // Mark as returned
+    equipment.issuedTo = null;
+    equipment.issuedDate = null;
+    equipment.status = 'available';
+    await equipment.save();
+
+    res.json({ message: 'Equipment returned successfully', equipment });
+  } catch (error) {
+    res.status(500).json({ message: 'Error returning equipment', error });
   }
 };
