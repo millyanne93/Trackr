@@ -16,7 +16,10 @@ router.delete('/equipment/:id', authMiddleware, isAdmin, equipmentController.del
 // New routes added
 router.get('/summary', authMiddleware, isAdmin, equipmentController.getSummary);
 router.get('/activity', authMiddleware, isAdmin, equipmentController.getActivity);
-router.get('/equipment/issued', authMiddleware, equipmentController.getIssuedEquipment);
+router.get('/issued', authMiddleware, equipmentController.getIssuedEquipment);
+router.post('/assign', authMiddleware, isAdmin, equipmentController.assignEquipment);
+router.put('/return/:id', authMiddleware, equipmentController.returnEquipment);
+router.get('/assigned', authMiddleware, equipmentController.getAssignedEquipment);
 
 router.post('/register', userController.registerUser);
 router.post('/login', userController.loginUser);
