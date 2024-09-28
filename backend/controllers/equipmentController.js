@@ -89,12 +89,16 @@ exports.deleteEquipment = async (req, res) => {
 // Get summary
 exports.getSummary = async (req, res) => {
   try {
-    // Your logic to calculate and return the summary
+    // Calculate total equipment, issued equipment, available equipment
     const totalEquipment = await Equipment.countDocuments();
     const issuedEquipment = await Equipment.countDocuments({ status: "issued" });
     const availableEquipment = totalEquipment - issuedEquipment;
-    
-    res.json({ totalEquipment, issuedEquipment, availableEquipment });
+
+    // Calculate total users
+    const totalUsers = await User.countDocuments();
+
+    // Send the summary data to the frontend
+    res.json({ totalEquipment, issuedEquipment, availableEquipment, totalUsers });
   } catch (err) {
     console.error('Error fetching summary:', err);
     res.status(500).send('Server error');
@@ -151,7 +155,7 @@ exports.assignEquipment = async (req, res) => {
 
     await equipment.save();
 
-    // Populate 'checkedOutBy' field
+    // Populate 'checkedOutBy' field to return the user's username
     const populatedEquipment = await equipment.populate('checkedOutBy', 'username');
 
     res.status(200).json({
@@ -163,7 +167,6 @@ exports.assignEquipment = async (req, res) => {
     res.status(500).json({ message: 'Error assigning equipment', error });
   }
 };
-
 
 exports.getAssignedEquipment = async (req, res) => {
   try {

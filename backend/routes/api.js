@@ -24,6 +24,8 @@ router.get('/assigned', authMiddleware, equipmentController.getAssignedEquipment
 router.post('/register', userController.registerUser);
 router.post('/login', userController.loginUser);
 router.get('/users', authMiddleware, userController.getAllUsers);
+router.get('/users/:id', authMiddleware, isAdmin, userController.getUserById);
+router.put('/users/:id', authMiddleware, isAdmin, userController.updateUser);
 router.delete('/users/:id', authMiddleware, isAdmin, userController.deleteUser);
 
 router.post('/logout', userController.logoutUser);

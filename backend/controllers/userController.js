@@ -27,7 +27,7 @@ exports.registerUser = async (req, res) => {
         _id: user._id,
         username: user.username,
         role: user.role,
-      }
+      },
     });
   } catch (err) {
     if (err.name === 'ValidationError') {
@@ -58,18 +58,62 @@ exports.loginUser = async (req, res) => {
         _id: user._id,
         username: user.username,
         role: user.role,
-      }
+      },
     });
   } catch (err) {
     res.status(500).send(err.message);
   }
 };
 
-// Get all users (admin only)
+// Get all users (with pagination for admin)
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
-    res.json(users);
+    const page = parseInt(req.query.page) || 1; // Current page, default to 1
+    const limit = parseInt(req.query.limit) || 10; // Results per page, default to 10
+    const skip = (page - 1) * limit;
+
+    const users = await User.find().skip(skip).limit(limit);
+    const totalUsers = await User.countDocuments(); // Total number of users
+
+    res.json({
+      users,
+      totalUsers,
+      totalPages: Math.ceil(totalUsers / limit),
+      currentPage: page,
+    });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+// Get user by ID
+exports.getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+// Update user details (admin only)
+exports.updateUser = async (req, res) => {
+  try {
+    const { username, role } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { username, role },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ message: 'User updated successfully', user: updatedUser });
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -79,13 +123,16 @@ exports.getAllUsers = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-
-    res.json({ message: 'User deleted successfully' });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ message: 'User deleted successfully', user });
   } catch (err) {
     res.status(500).send(err.message);
   }
 };
+
+// Logout user
 exports.logoutUser = (req, res) => {
   // Invalidate the token (client-side will handle token removal)
   res.status(200).json({ message: 'Logged out successfully' });
