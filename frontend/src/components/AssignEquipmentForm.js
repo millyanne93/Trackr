@@ -60,11 +60,16 @@ const AssignEquipmentForm = ({ users, equipmentList, onAssign }) => {
           className="border border-gray-300 p-2 rounded w-full"
         >
           <option value="">Select Equipment</option>
-          {equipmentList.map((equipment) => (
-            <option key={equipment._id} value={equipment._id}>
-              {equipment.name} ({equipment.status})
-            </option>
-          ))}
+          {/* Ensure equipmentList is an array before using .map() */}
+          {Array.isArray(equipmentList) ? (
+            equipmentList.map((equipment) => (
+              <option key={equipment._id} value={equipment._id}>
+                {equipment.name} ({equipment.status})
+              </option>
+            ))
+          ) : (
+            <option>No equipment available</option>
+          )}
         </select>
       </div>
 

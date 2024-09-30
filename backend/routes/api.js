@@ -37,5 +37,7 @@ router.delete('/users/:id', authMiddleware, isAdmin, userController.deleteUser);
 
 // Route to get current user's details based on the JWT token
 router.get('/user/me', authMiddleware, userController.getUserProfile);
+router.get('/notifications', authMiddleware, userController.getNotificationsForUser);
+router.post('/notifications/send', authMiddleware, isAdmin, userController.sendNotification);
 
 module.exports = router;

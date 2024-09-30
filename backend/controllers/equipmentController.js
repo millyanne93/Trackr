@@ -139,7 +139,7 @@ exports.getIssuedEquipment = async (req, res) => {
 
 // Assign equipment to a user
 exports.assignEquipment = async (req, res) => {
-  const { equipmentId, userId } = req.body;
+  const { equipmentId, userId, returnDate } = req.body;
 
   if (!mongoose.Types.ObjectId.isValid(equipmentId) || !mongoose.Types.ObjectId.isValid(userId)) {
     return res.status(400).json({ message: 'Invalid equipment or user ID' });

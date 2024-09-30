@@ -12,6 +12,7 @@ import {
 import LogoutButton from '../components/LogoutButton';
 import AddEquipmentForm from '../components/AddEquipmentForm';
 import AssignEquipmentForm from '../components/AssignEquipmentForm';
+import SendNotification from '../components/SendNotification';
 
 const AdminHomePage = () => {
   const [summaryData, setSummaryData] = useState({});
@@ -25,6 +26,7 @@ const AdminHomePage = () => {
   const [editingEquipment, setEditingEquipment] = useState(null);
   const [showEditEquipmentModal, setShowEditEquipmentModal] = useState(false); 
   const [showEquipmentList, setShowEquipmentList] = useState(false);
+  const [showSendNotification, setShowSendNotification] = useState(false);
 
   const [showSummary, setShowSummary] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
@@ -389,6 +391,17 @@ const AdminHomePage = () => {
         ) : (
           <p> Data for Equipment Issued.</p>
         )}
+      </div>
+
+      {/* Send Notification Section */}
+      <div className="bg-white p-4 rounded shadow mb-6">
+        <h3
+          className="text-xl font-semibold cursor-pointer hover:text-green-500"
+          onClick={() => setShowSendNotification(!showSendNotification)}
+        >
+          Send Notification
+        </h3>
+        {showSendNotification && <SendNotification />}
       </div>
 
       {/* Add Equipment Form */}

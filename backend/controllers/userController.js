@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const Notification = require('../models/Notification');
 
 // Register new user
 exports.registerUser = async (req, res) => {
@@ -108,7 +109,39 @@ exports.getUserProfile = async (req, res) => {
   }
 };
 
+exports.sendNotification = async (req, res) => {
+  try {
+    const { userId, message } = req.body;
 
+    // Find the user by their ID
+    const user = await User.findById(userId); // Use userId to find the user
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Create and save the notification
+    const notification = new Notification({
+      user: user._id, // Store user ID, not username, to maintain relations
+      message,
+      date: new Date(),
+    });
+    await notification.save();
+
+    res.status(201).json({ message: 'Notification sent!' });
+  } catch (error) {
+    console.error('Error sending notification:', error); // Log the error
+    res.status(500).json({ message: 'Error sending notification', error: error.message });
+  }
+};
+
+exports.getNotificationsForUser = async (req, res) => {
+  try {
+    const notifications = await Notification.find({ user: req.user._id }).sort({ date: -1 });
+    res.status(200).json(notifications);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching notifications', error });
+  }
+};
 // Get user by ID
 exports.getUserById = async (req, res) => {
   try {

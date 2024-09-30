@@ -26,36 +26,54 @@ const RegularUserHomePage = () => {
     }
   };
 
-  // Fetch assigned equipment on component mount
-  useEffect(() => {
-    const fetchAssignedEquipment = async () => {
-      try {
-        const token = Cookies.get('token');
-        console.log('Retrieved token:', token);
-
-        if (!token) {
-          throw new Error('No token found');
-        }
-
-        const response = await api.get('/assigned', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const { equipment } = response.data;
-
-        // If equipment is empty, simply set it to an empty array
-        setAssignedEquipment(equipment || []);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error fetching assigned equipment:', error);
-        setError('Error fetching assigned equipment');
-        setLoading(false);
+  // Fetch assigned equipment
+  const fetchAssignedEquipment = async () => {
+    try {
+      const token = Cookies.get('token');
+      if (!token) {
+        throw new Error('No token found');
       }
-    };
 
-    fetchUsername(); // Call fetchUsername when component mounts
+      const response = await api.get('/assigned', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const { equipment } = response.data;
+      setAssignedEquipment(equipment || []);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching assigned equipment:', error);
+      setError('Error fetching assigned equipment');
+      setLoading(false);
+    }
+  };
+
+  // Fetch notifications
+  const fetchNotifications = async () => {
+    try {
+      const token = Cookies.get('token');
+      const response = await api.get('/notifications', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setNotifications(response.data);
+    } catch (error) {
+      console.error('Error fetching notifications:', error.response?.data?.message || error.message);
+    }
+  };
+
+  // Fetch borrowing history (if applicable)
+  // (Assuming you have a similar function to fetch borrowing history)
+  // const fetchBorrowingHistory = async () => { ... };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchUsername();
     fetchAssignedEquipment();
+    fetchNotifications(); // Fetch notifications here
+    // fetchBorrowingHistory(); // Uncomment if you implement this function
   }, []);
 
   // Function to handle equipment return
@@ -72,8 +90,6 @@ const RegularUserHomePage = () => {
         },
       });
       alert('Equipment returned successfully');
-
-      // Update the assignedEquipment list by removing the returned item
       setAssignedEquipment(assignedEquipment.filter(equipment => equipment._id !== equipmentId));
     } catch (error) {
       alert('Failed to return equipment.');
@@ -121,7 +137,11 @@ const RegularUserHomePage = () => {
         <h3 className="text-xl font-semibold">Notifications</h3>
         {notifications.length > 0 ? (
           <ul>
-            {notifications.map((note, index) => <li key={index}>{note}</li>)}
+            {notifications.map((note) => (
+              <li key={note._id}>
+                {note.message} - {new Date(note.date).toLocaleString()}
+              </li>
+            ))}
           </ul>
         ) : (
           <p>No notifications available.</p>
