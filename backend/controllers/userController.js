@@ -86,6 +86,29 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
+// usersController.js
+
+exports.getUserProfile = async (req, res) => {
+  try {
+    // req.user is set by your auth middleware after verifying the token
+    if (!req.user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return user details (excluding sensitive fields like password)
+    res.json({
+      _id: req.user._id,
+      username: req.user.username,
+      role: req.user.role,
+      // Include other user details if necessary
+    });
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+
 // Get user by ID
 exports.getUserById = async (req, res) => {
   try {

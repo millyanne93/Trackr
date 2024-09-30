@@ -2,13 +2,22 @@ const Equipment = require('../models/Equipment');
 const User = require('../models/User');
 const mongoose = require('mongoose');
 
-// Get all equipment
+// Get all equipment with pagination
 exports.getAllEquipment = async (req, res) => {
+  const { page = 1, limit = 10 } = req.query; // Get page and limit from query, default to page 1 and limit 10
   try {
-    const equipment = await Equipment.find();
-    res.json(equipment);
+    const equipment = await Equipment.find()
+      .skip((page - 1) * limit) // Pagination logic
+      .limit(parseInt(limit));
+    const totalEquipment = await Equipment.countDocuments(); // Total equipment count for pagination
+
+    res.json({
+      equipment,
+      currentPage: parseInt(page),
+      totalPages: Math.ceil(totalEquipment / limit),
+    });
   } catch (err) {
-    console.error('Error fetching all equipment:', err); // Log the error
+    console.error('Error fetching all equipment:', err);
     res.status(500).send('Server error');
   }
 };
@@ -152,6 +161,7 @@ exports.assignEquipment = async (req, res) => {
     equipment.checkedOutBy = user._id;
     equipment.checkedOutAt = new Date();
     equipment.status = 'issued';
+    equipment.returnDate = returnDate ? new Date(returnDate) : null;
 
     await equipment.save();
 
@@ -194,19 +204,21 @@ exports.getAssignedEquipment = async (req, res) => {
 exports.returnEquipment = async (req, res) => {
   try {
     const equipment = await Equipment.findById(req.params.id);
+
     // Check if equipment exists and is assigned to the current user
-    if (!equipment || equipment.issuedTo.toString() !== req.user._id.toString()) {
+    if (!equipment || equipment.checkedOutBy.toString() !== req.user._id.toString()) {
       return res.status(404).json({ message: 'Equipment not found or not assigned to this user' });
     }
-    
+
     // Mark as returned
-    equipment.issuedTo = null;
-    equipment.issuedDate = null;
-    equipment.status = 'available';
+    equipment.checkedOutBy = null;  // Clear the assigned user
+    equipment.checkedOutAt = null;  // Clear the checkout date
+    equipment.status = 'available';  // Mark the equipment as available
     await equipment.save();
 
     res.json({ message: 'Equipment returned successfully', equipment });
   } catch (error) {
+    console.error('Error returning equipment:', error);
     res.status(500).json({ message: 'Error returning equipment', error });
   }
 };

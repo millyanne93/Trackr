@@ -3,49 +3,77 @@ import api from '../services/api';
 import LogoutButton from '../components/LogoutButton';
 import Cookies from 'js-cookie';
 
-const RegularUserHomePage = ({ username = 'User' }) => {
+const RegularUserHomePage = () => {
+  const [username, setUsername] = useState('');
   const [assignedEquipment, setAssignedEquipment] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [borrowingHistory, setBorrowingHistory] = useState([]);
 
-  // Fetch assigned equipment on component mount
-  useEffect(() => {
-  const fetchAssignedEquipment = async () => {
+  // Fetch Username
+  const fetchUsername = async () => {
     try {
-      const token = Cookies.get('token');
-      console.log('Retrieved token:', token);
-
-      if (!token) {
-        throw new Error('No token found');
-      }
-
-      const response = await api.get('/assigned', {
+      const token = localStorage.getItem('token'); // or use Cookies.get('token') if you're storing it in cookies
+      const res = await api.get('/user/me', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
-      const { equipment } = response.data;
-
-      // If equipment is empty, simply set it to an empty array
-      setAssignedEquipment(equipment || []);
-      setLoading(false);
+      setUsername(res.data.username);
     } catch (error) {
-      console.error('Error fetching assigned equipment:', error);
-      setError('Error fetching assigned equipment');
-      setLoading(false);
+      console.error('Error fetching username:', error.response ? error.response.data : error.message);
     }
   };
 
-  fetchAssignedEquipment();
-}, []);
+  // Fetch assigned equipment on component mount
+  useEffect(() => {
+    const fetchAssignedEquipment = async () => {
+      try {
+        const token = Cookies.get('token');
+        console.log('Retrieved token:', token);
+
+        if (!token) {
+          throw new Error('No token found');
+        }
+
+        const response = await api.get('/assigned', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const { equipment } = response.data;
+
+        // If equipment is empty, simply set it to an empty array
+        setAssignedEquipment(equipment || []);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching assigned equipment:', error);
+        setError('Error fetching assigned equipment');
+        setLoading(false);
+      }
+    };
+
+    fetchUsername(); // Call fetchUsername when component mounts
+    fetchAssignedEquipment();
+  }, []);
 
   // Function to handle equipment return
   const handleReturn = async (equipmentId) => {
     try {
-      await api.put(`/return/${equipmentId}`);
+      const token = Cookies.get('token');
+      if (!token) {
+        throw new Error('No token found');
+      }
+
+      await api.put(`/return/${equipmentId}`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       alert('Equipment returned successfully');
+
+      // Update the assignedEquipment list by removing the returned item
       setAssignedEquipment(assignedEquipment.filter(equipment => equipment._id !== equipmentId));
     } catch (error) {
       alert('Failed to return equipment.');
@@ -64,7 +92,7 @@ const RegularUserHomePage = ({ username = 'User' }) => {
   return (
     <div className="p-6">
       <LogoutButton />
-      <h2 className="text-3xl font-bold text-green-700 mb-6">Welcome, {username}</h2>
+      <h2 className="text-3xl font-bold text-green-700 mb-6">Welcome, {username}!</h2>
 
       {/* Your Equipment Section */}
       <div className="bg-white p-4 rounded shadow mb-6">
@@ -73,7 +101,7 @@ const RegularUserHomePage = ({ username = 'User' }) => {
           <ul>
             {assignedEquipment.map((item) => (
               <li key={item._id}>
-                {item.name} - Status: {item.status} - Return Date: {item.returnDate}
+                {item.name} - Status: {item.status} - Return Date: {item.returnDate || 'No return date'}
                 <button
                   className="bg-red-500 text-white p-2 ml-4 rounded"
                   onClick={() => handleReturn(item._id)}
