@@ -13,7 +13,6 @@ const api = axios.create({
 // Request interceptor to add the token
 api.interceptors.request.use((config) => {
   const token = Cookies.get('token');
-  console.log('Token retrieved in interceptor:', token); // Log the token to ensure it's being retrieved correctly
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`;
   }

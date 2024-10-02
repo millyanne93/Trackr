@@ -7,6 +7,7 @@ const equipmentSchema = new mongoose.Schema({
   status: { type: String, default: 'available' },
   checkedOutBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
   checkedOutAt: { type: Date },
+  returnDate: { type: Date },
   imageUrl: { type: String }
 });
 

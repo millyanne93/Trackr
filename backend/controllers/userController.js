@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
+const Notification = require('../models/Notification');
 
 // Register new user
 exports.registerUser = async (req, res) => {
@@ -27,7 +28,7 @@ exports.registerUser = async (req, res) => {
         _id: user._id,
         username: user.username,
         role: user.role,
-      }
+      },
     });
   } catch (err) {
     if (err.name === 'ValidationError') {
@@ -58,18 +59,117 @@ exports.loginUser = async (req, res) => {
         _id: user._id,
         username: user.username,
         role: user.role,
-      }
+      },
     });
   } catch (err) {
     res.status(500).send(err.message);
   }
 };
 
-// Get all users (admin only)
+// Get all users (with pagination for admin)
 exports.getAllUsers = async (req, res) => {
   try {
-    const users = await User.find();
-    res.json(users);
+    const page = parseInt(req.query.page) || 1; // Current page, default to 1
+    const limit = parseInt(req.query.limit) || 10; // Results per page, default to 10
+    const skip = (page - 1) * limit;
+
+    const users = await User.find().skip(skip).limit(limit);
+    const totalUsers = await User.countDocuments(); // Total number of users
+
+    res.json({
+      users,
+      totalUsers,
+      totalPages: Math.ceil(totalUsers / limit),
+      currentPage: page,
+    });
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+// usersController.js
+
+exports.getUserProfile = async (req, res) => {
+  try {
+    // req.user is set by your auth middleware after verifying the token
+    if (!req.user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Return user details (excluding sensitive fields like password)
+    res.json({
+      _id: req.user._id,
+      username: req.user.username,
+      role: req.user.role,
+      // Include other user details if necessary
+    });
+  } catch (error) {
+    console.error('Error fetching user profile:', error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+exports.sendNotification = async (req, res) => {
+  try {
+    const { userId, message } = req.body;
+
+    // Find the user by their ID
+    const user = await User.findById(userId); // Use userId to find the user
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Create and save the notification
+    const notification = new Notification({
+      user: user._id, // Store user ID, not username, to maintain relations
+      message,
+      date: new Date(),
+    });
+    await notification.save();
+
+    res.status(201).json({ message: 'Notification sent!' });
+  } catch (error) {
+    console.error('Error sending notification:', error); // Log the error
+    res.status(500).json({ message: 'Error sending notification', error: error.message });
+  }
+};
+
+exports.getNotificationsForUser = async (req, res) => {
+  try {
+    const notifications = await Notification.find({ user: req.user._id }).sort({ date: -1 });
+    res.status(200).json(notifications);
+  } catch (error) {
+    res.status(500).json({ message: 'Error fetching notifications', error });
+  }
+};
+// Get user by ID
+exports.getUserById = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(user);
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
+// Update user details (admin only)
+exports.updateUser = async (req, res) => {
+  try {
+    const { username, role } = req.body;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.params.id,
+      { username, role },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({ message: 'User updated successfully', user: updatedUser });
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -79,13 +179,16 @@ exports.getAllUsers = async (req, res) => {
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
-    if (!user) return res.status(404).json({ message: 'User not found' });
-
-    res.json({ message: 'User deleted successfully' });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json({ message: 'User deleted successfully', user });
   } catch (err) {
     res.status(500).send(err.message);
   }
 };
+
+// Logout user
 exports.logoutUser = (req, res) => {
   // Invalidate the token (client-side will handle token removal)
   res.status(200).json({ message: 'Logged out successfully' });

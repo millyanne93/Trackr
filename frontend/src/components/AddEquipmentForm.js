@@ -97,7 +97,7 @@ const AddEquipmentForm = () => {
       </div>
       <button
         type="submit"
-        className="bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className="bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >
         Add Equipment
       </button>

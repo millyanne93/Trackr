@@ -4,16 +4,18 @@ import api from '../services/api';
 const AssignEquipmentForm = ({ users, equipmentList, onAssign }) => {
   const [selectedUser, setSelectedUser] = useState('');
   const [selectedEquipment, setSelectedEquipment] = useState('');
+  const [returnDate, setReturnDate] = useState('');  // New state for return date
   const [loading, setLoading] = useState(false);
 
   // Function to assign equipment
-  const assignEquipment = async (equipmentId, userId) => {
+  const assignEquipment = async (equipmentId, userId, returnDate) => {
     try {
       setLoading(true);
-      await api.post('/assign', { equipmentId, userId });
+      await api.post('/assign', { equipmentId, userId, returnDate }); // Pass returnDate to backend
       alert('Equipment assigned successfully!');
       setSelectedUser('');
       setSelectedEquipment('');
+      setReturnDate(''); // Clear the return date field
       onAssign(); // Update the parent component after successful assignment
     } catch (error) {
       console.error('Error assigning equipment:', error);
@@ -26,7 +28,7 @@ const AssignEquipmentForm = ({ users, equipmentList, onAssign }) => {
   // Handle form submission
   const handleAssign = () => {
     if (selectedUser && selectedEquipment) {
-      assignEquipment(selectedEquipment, selectedUser);
+      assignEquipment(selectedEquipment, selectedUser, returnDate);  // Pass return date when assigning
     } else {
       alert('Please select both a user and equipment.');
     }
@@ -60,18 +62,32 @@ const AssignEquipmentForm = ({ users, equipmentList, onAssign }) => {
           className="border border-gray-300 p-2 rounded w-full"
         >
           <option value="">Select Equipment</option>
-          {equipmentList.map((equipment) => (
-            <option key={equipment._id} value={equipment._id}>
-              {equipment.name} ({equipment.status})
-            </option>
-          ))}
+          {Array.isArray(equipmentList) ? (
+            equipmentList.map((equipment) => (
+              <option key={equipment._id} value={equipment._id}>
+                {equipment.name} ({equipment.status})
+              </option>
+            ))
+          ) : (
+            <option>No equipment available</option>
+          )}
         </select>
+      </div>
+
+      <div className="my-4">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Return Date (Optional):</label>
+        <input
+          type="date"
+          value={returnDate}
+          onChange={(e) => setReturnDate(e.target.value)}
+          className="border border-gray-300 p-2 rounded w-full"
+        />
       </div>
 
       <button
         onClick={handleAssign}
         disabled={loading}
-        className="bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className="bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >
         {loading ? 'Assigning...' : 'Assign Equipment'}
       </button>
