@@ -40,5 +40,7 @@ router.delete('/users/:id', authMiddleware, isAdmin, userController.deleteUser);
 router.get('/user/me', authMiddleware, userController.getUserProfile);
 router.get('/notifications', authMiddleware, userController.getNotificationsForUser);
 router.post('/notifications/send', authMiddleware, isAdmin, userController.sendNotification);
+router.put('/notifications/:id/read', authMiddleware, userController.markNotificationAsRead);
+router.delete('/notifications/:id', authMiddleware, userController.deleteNotification);
 
 module.exports = router;

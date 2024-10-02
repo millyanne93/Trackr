@@ -142,6 +142,55 @@ exports.getNotificationsForUser = async (req, res) => {
     res.status(500).json({ message: 'Error fetching notifications', error });
   }
 };
+
+exports.markNotificationAsRead = async (req, res) => {
+  try {
+    const { id: notificationId } = req.params; // Extract notificationId from URL params
+    const userId = req.user._id;
+
+    console.log('User ID:', userId);
+
+    // Find the notification by ID and user
+    const notification = await Notification.findOne({ _id: notificationId, user: userId });
+    console.log('Notification found:', notification);
+
+    if (!notification) {
+      return res.status(404).json({ message: 'No notification found' });
+    }
+
+    notification.read = true;
+    await notification.save();
+
+    res.status(200).json({ message: 'Notification marked as read' });
+  } catch (error) {
+    console.error('Error updating notification:', error);
+    res.status(500).json({ message: 'Error updating notification', error: error.message });
+  }
+};
+
+
+exports.deleteNotification = async (req, res) => {
+  try {
+    const { id: notificationId } = req.params; // Extract notificationId from the URL params
+    const userId = req.user._id;
+
+    console.log('User ID:', userId);
+
+    // Find and delete the notification by ID and user
+    const notification = await Notification.findOneAndDelete({ _id: notificationId, user: userId });
+    console.log('Notification deleted:', notification);
+
+    if (!notification) {
+      return res.status(404).json({ message: 'No notification found' });
+    }
+
+    res.status(200).json({ message: 'Notification deleted successfully', notificationId });
+  } catch (error) {
+    console.error('Error deleting notification:', error);
+    res.status(500).json({ message: 'Error deleting notification', error: error.message });
+  }
+};
+
 // Get user by ID
 exports.getUserById = async (req, res) => {
   try {
