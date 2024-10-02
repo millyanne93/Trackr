@@ -15,7 +15,7 @@ const RegularUserHomePage = () => {
   // Fetch Username and set userId
   const fetchUsername = async () => {
     try {
-      const token = localStorage.getItem('token'); // Use localStorage consistently for tokens
+      const token = localStorage.getItem('token');
       const res = await api.get('/user/me', {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -31,7 +31,7 @@ const RegularUserHomePage = () => {
   // Fetch assigned equipment
   const fetchAssignedEquipment = async () => {
     try {
-      const token = Cookies.get('token'); // Use localStorage for consistency
+      const token = Cookies.get('token');
       if (!token) {
         throw new Error('No token found');
       }
@@ -109,13 +109,47 @@ const RegularUserHomePage = () => {
       });
 
       alert('Equipment returned successfully');
-      await fetchBorrowingHistory(); 
+      await fetchBorrowingHistory();
     } catch (error) {
       // Revert the UI update if an error occurs
       setAssignedEquipment(assignedEquipment); // Revert back in case of error
 
       console.error('Error returning equipment:', error);
       alert(`Failed to return equipment: ${error.message || 'An error occurred'}`);
+    }
+  };
+
+  const markAsRead = async (notificationId) => {
+    try {
+      console.log(`Marking notification as read, ID: ${notificationId}`); // Log the notification ID
+      const token = Cookies.get('token');
+      const response = await api.put(`/notifications/${notificationId}/read`, null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('Notification marked as read:', response.data); // Log the response
+
+      fetchNotifications(); // Refetch notifications after marking as read
+    } catch (error) {
+      console.error('Error marking notification as read:', error.response?.data?.message || error.message);
+    }
+  };
+
+  const deleteNotification = async (notificationId) => {
+    try {
+      console.log(`Deleting notification, ID: ${notificationId}`); // Log the notification ID
+      const token = Cookies.get('token');
+      const response = await api.delete(`/notifications/${notificationId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log('Notification deleted:', response.data); // Log the response
+
+      fetchNotifications(); // Refetch notifications after deletion
+    } catch (error) {
+      console.error('Error deleting notification:', error.response?.data?.message || error.message);
     }
   };
 
@@ -150,29 +184,49 @@ const RegularUserHomePage = () => {
             ))}
           </ul>
         ) : (
-          <p>Equipment currently Assigned.</p>
+          <p>No equipment currently assigned.</p>
         )}
       </div>
 
       {/* Notifications Section */}
       <div className="bg-white p-4 rounded shadow mb-6">
-        <h3 className="text-xl font-semibold cursor-pointer hover:text-teal-500">Notifications</h3>
+        <h3 className="text-xl font-semibold cursor-pointer hover:text-teal-500">
+          Notifications
+        </h3>
         {notifications && notifications.length > 0 ? (
           <ul>
             {notifications.map((note) => (
-              <li key={note._id}>
-                {note.message} - {new Date(note.date).toLocaleString()}
+              <li key={note._id} className="flex justify-between items-center mb-2">
+                <span>{note.message} - {new Date(note.date).toLocaleString()}</span>
+                <div className="ml-4">
+                  <div className="bg-gray-100 p-2 rounded-full shadow-sm flex space-x-4">
+                    {!note.read && (
+                      <button
+                        onClick={() => markAsRead(note._id)}
+                        className="text-teal-500 hover:text-blue-700"
+                      >
+                        Mark as Read
+                      </button>
+                    )}
+                    <button
+                      onClick={() => deleteNotification(note._id)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
               </li>
             ))}
           </ul>
         ) : (
-          <p>Your Notifications.</p>
+          <p>No notifications available.</p>
         )}
       </div>
 
       {/* Borrowing History Section */}
       <div className="bg-white p-4 rounded shadow">
-        <h3 className="text-xl font-semibold cursor-pointer hover:text-teal-500">Assigned Equipment Hitory</h3>
+        <h3 className="text-xl font-semibold cursor-pointer hover:text-teal-500">Borrowing History</h3>
         {borrowingHistory.length > 0 ? (
           <ul>
             {borrowingHistory.map((history, index) => (
@@ -183,7 +237,7 @@ const RegularUserHomePage = () => {
             ))}
           </ul>
         ) : (
-          <p>Your Equipment History.</p>
+          <p>Your borrowing history is empty.</p>
         )}
       </div>
     </div>

@@ -77,7 +77,7 @@ const Login = () => {
             required
           />
         </div>
-        <button type="submit" className="bg-teal-700 text-white px-4 py-2 rounded">
+        <button type="submit" className="bg-teal-700 text-white px-4 py-2 rounded-full">
           Login
         </button>
       </form>

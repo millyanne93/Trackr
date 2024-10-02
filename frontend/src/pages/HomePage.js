@@ -6,7 +6,7 @@ const HomePage = () => (
     <header className="text-center mb-8">
       <h1 className="text-4xl font-bold text-teal-700 mb-4">Trackr: Efficient Equipment Tracking for Your Business</h1>
       <p className="text-lg mb-6">Keep track of your organization's equipment effortlessly with our intuitive software solution.</p>
-      <a href="/register" className="bg-teal-500 text-white py-2 px-4 rounded hover:bg-teal-600 transition">Get Started</a>
+      <a href="/register" className="bg-teal-500 text-white py-2 px-4 rounded-full hover:bg-teal-600 transition">Get Started</a>
     </header>
     
     {/* Features Section */}
@@ -37,7 +37,7 @@ const HomePage = () => (
         <li className="mb-2">Efficient resource utilization</li>
         <li className="mb-2">Enhanced maintenance management</li>
       </ul>
-      <a href="/register"  className="bg-teal-500 text-white py-2 px-4 rounded hover:bg-teal-600 transition">Start Now</a>
+      <a href="/register"  className="bg-teal-500 text-white py-2 px-4 rounded-full hover:bg-teal-600 transition">Start Now</a>
     </section>
 
     {/* Footer Section */}

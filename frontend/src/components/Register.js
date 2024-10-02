@@ -91,7 +91,7 @@ const Register = () => {
             <option value="admin">Admin</option>
           </select>
         </div>
-        <button type="submit" className="bg-teal-700 text-white px-4 py-2 rounded">
+        <button type="submit" className="bg-teal-700 text-white px-4 py-2 rounded-full">
           Register
         </button>
       </form>
