@@ -23,6 +23,7 @@ router.get('/issued', authMiddleware, equipmentController.getIssuedEquipment);
 router.post('/assign', authMiddleware, isAdmin, equipmentController.assignEquipment);
 router.put('/return/:id', authMiddleware, equipmentController.returnEquipment);
 router.get('/assigned', authMiddleware, equipmentController.getAssignedEquipment);
+router.get('/borrowing-history', authMiddleware, equipmentController.getBorrowingHistory);
 
 // User routes
 router.post('/register', userController.registerUser);

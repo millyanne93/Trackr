@@ -88,7 +88,7 @@ function SendNotification() {
       <button
         onClick={handleSendNotification}
         disabled={loading}
-        className="bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className="bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >
         {loading ? 'Sending...' : 'Send Notification'}
       </button>

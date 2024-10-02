@@ -201,14 +201,14 @@ const AdminHomePage = () => {
   return (
     <div className="p-6">
       <LogoutButton />
-      <h2 className="text-3xl font-bold text-green-700 mb-6">
+      <h2 className="text-3xl font-bold text-teal-700 mb-6">
         Welcome, {username}!
       </h2>
 
       {/* Summary Section */}
       <div className="bg-white p-4 rounded shadow mb-6">
         <h3
-          className="text-xl font-semibold cursor-pointer hover:text-green-500"
+          className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowSummary(!showSummary)}
         >
           Summary
@@ -228,7 +228,7 @@ const AdminHomePage = () => {
       {/* Activity Overview */}
       <div className="bg-white p-4 rounded shadow mb-6">
         <h3
-          className="text-xl font-semibold cursor-pointer hover:text-green-500"
+          className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowActivity(!showActivity)}
         >
           Activity Overview
@@ -250,7 +250,7 @@ const AdminHomePage = () => {
       {/* Equipment List Section */}
       <div className="bg-white p-4 rounded shadow mb-6">
         <h3
-          className="text-xl font-semibold cursor-pointer hover:text-green-500"
+          className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowEquipmentList(!showEquipmentList)}
         >
           Equipment List
@@ -265,7 +265,7 @@ const AdminHomePage = () => {
                   <span>{equipment.name}</span>
                   <div>
                     <button
-                      className="text-blue-500 mr-2"
+                      className="text-teal-500 mr-2"
                       onClick={() => handleEditEquipment(equipment)}
                     >
                       Edit
@@ -292,7 +292,7 @@ const AdminHomePage = () => {
               key={index}
               className={`mx-1 px-3 py-1 ${
                 currentPage === index + 1
-                  ? 'bg-green-500 text-white'
+                  ? 'bg-teal-500 text-white'
                   : 'bg-gray-300'
               }`}
               onClick={() => handlePageChange(index + 1)}
@@ -343,7 +343,7 @@ const AdminHomePage = () => {
                   </button>
                   <button
                     type="submit"
-                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    className="bg-teal-500 text-white px-4 py-2 rounded"
                   >
                     Update Equipment
                   </button>
@@ -356,7 +356,7 @@ const AdminHomePage = () => {
       {/* Equipment Issued Section */}
       <div className="bg-white p-4 rounded shadow mb-6">
         <h3
-          className="text-xl font-semibold cursor-pointer hover:text-green-500"
+          className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowIssuedEquipment(!showIssuedEquipment)}
         >
           Equipment Issued
@@ -396,7 +396,7 @@ const AdminHomePage = () => {
       {/* Send Notification Section */}
       <div className="bg-white p-4 rounded shadow mb-6">
         <h3
-          className="text-xl font-semibold cursor-pointer hover:text-green-500"
+          className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowSendNotification(!showSendNotification)}
         >
           Send Notification
@@ -407,7 +407,7 @@ const AdminHomePage = () => {
       {/* Add Equipment Form */}
       <div className="bg-white p-4 rounded shadow mb-6">
         <h3
-          className="text-xl font-semibold cursor-pointer hover:text-green-500"
+          className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowAddEquipment(!showAddEquipment)}
         >
           Add Equipment
@@ -418,7 +418,7 @@ const AdminHomePage = () => {
       {/* Assign Equipment Form */}
       <div className="bg-white p-4 rounded shadow mb-6">
         <h3
-          className="text-xl font-semibold cursor-pointer hover:text-green-500"
+          className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowAssignEquipment(!showAssignEquipment)}
         >
           Assign Equipment
@@ -435,7 +435,7 @@ const AdminHomePage = () => {
       {/* User Management Section */}
       <div className="bg-white p-4 rounded shadow mb-6">
         <h3
-          className="text-xl font-semibold cursor-pointer hover:text-green-500"
+          className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowUserManagement(!showUserManagement)}
         >
           User Management
@@ -448,7 +448,7 @@ const AdminHomePage = () => {
                   <span>{user.username}</span>
                   <div>
                     <button
-                      className="text-blue-500 mr-2"
+                      className="text-teal-500 mr-2"
                       onClick={() => handleEditUser(user)}
                     >
                       Edit
@@ -471,7 +471,7 @@ const AdminHomePage = () => {
                   key={index}
                   className={`mx-1 px-3 py-1 ${
                     currentPage === index + 1
-                      ? 'bg-green-500 text-white'
+                      ? 'bg-teal-500 text-white'
                       : 'bg-gray-300'
                   }`}
                   onClick={() => handlePageChange(index + 1)}
@@ -526,7 +526,7 @@ const AdminHomePage = () => {
                   </button>
                   <button
                     type="submit"
-                    className="bg-green-500 text-white px-4 py-2 rounded"
+                    className="bg-teal-500 text-white px-4 py-2 rounded"
                   >
                     Update User
                   </button>

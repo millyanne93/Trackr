@@ -30,7 +30,6 @@ const Login = () => {
       const { token, user } = response.data;
       const { role, username } = user;
 
-      console.log('Token received:', token); // Log the token to verify it's received
 
       if (response.status === 200) {
         setSuccess('Login successful!');
@@ -52,9 +51,9 @@ const Login = () => {
 
   return (
     <div className="max-w-md mx-auto mt-16 p-8 bg-white rounded shadow">
-      <h2 className="text-2xl text-green-700 mb-4">Login</h2>
+      <h2 className="text-2xl text-teal-700 mb-4">Login</h2>
       {error && <p className="text-red-500 mb-4">{error}</p>}
-      {success && <p className="text-green-500 mb-4">{success}</p>}
+      {success && <p className="text-teal-500 mb-4">{success}</p>}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700">Username</label>
@@ -78,7 +77,7 @@ const Login = () => {
             required
           />
         </div>
-        <button type="submit" className="bg-green-700 text-white px-4 py-2 rounded">
+        <button type="submit" className="bg-teal-700 text-white px-4 py-2 rounded">
           Login
         </button>
       </form>
