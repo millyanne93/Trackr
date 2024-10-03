@@ -50,7 +50,7 @@ const AddEquipmentForm = () => {
 }; 
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow">
+    <form onSubmit={handleSubmit} className="bg-white p-4 rounded shadow max-w-lg">
       <h3 className="text-xl font-semibold mb-4">Add New Equipment</h3>
 
       {/* Display success or error messages */}

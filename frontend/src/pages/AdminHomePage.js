@@ -362,34 +362,36 @@ const AdminHomePage = () => {
           Equipment Issued
         </h3>
         {showIssuedEquipment && issuedEquipment.length > 0 ? (
-          <table className="min-w-full bg-white">
-            <thead>
-              <tr>
-                <th className="py-2">Equipment Name</th>
-                <th className="py-2">Issued To</th>
-                <th className="py-2">Issued On</th>
-                <th className="py-2">Return Date</th> 
-              </tr>
-            </thead>
-            <tbody>
-              {issuedEquipment.map((equipment, index) => (
-                <tr key={equipment._id}>
-                  <td className="border px-4 py-2">{equipment.name}</td>
-                  <td className="border px-4 py-2">
-                    {issuedEquipmentUsers[index]?.username ?? 'N/A'}
-                  </td>
-                  <td className="border px-4 py-2">
-                    {new Date(equipment.checkedOutAt).toLocaleDateString()}
-                  </td>
-                  <td className="border px-4 py-2">
-                   {equipment.returnDate ? new Date(equipment.returnDate).toLocaleDateString() : 'N/A'}
-                 </td>
+          <div className="overflow-x-auto">
+            <table className="min-w-full bg-white table-auto">
+              <thead>
+                <tr>
+                  <th className="py-2 px-4">Equipment Name</th>
+                  <th className="py-2 px-4">Issued To</th>
+                  <th className="py-2 px-4">Issued On</th>
+                  <th className="py-2 px-4">Return Date</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {issuedEquipment.map((equipment, index) => (
+                  <tr key={equipment._id}>
+                    <td className="border px-4 py-2">{equipment.name}</td>
+                    <td className="border px-4 py-2">
+                      {issuedEquipmentUsers[index]?.username ?? 'N/A'}
+                    </td>
+                    <td className="border px-4 py-2">
+                      {new Date(equipment.checkedOutAt).toLocaleDateString()}
+                    </td>
+                    <td className="border px-4 py-2">
+                      {equipment.returnDate ? new Date(equipment.returnDate).toLocaleDateString() : 'N/A'}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          <p> Data for Equipment Issued.</p>
+          <p>No data for equipment issued.</p>
         )}
       </div>
 
@@ -410,7 +412,7 @@ const AdminHomePage = () => {
           className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowAddEquipment(!showAddEquipment)}
         >
-          Add Equipment
+          Add New Equipment
         </h3>
         {showAddEquipment && <AddEquipmentForm onAdd={fetchData} />}
       </div>
@@ -526,7 +528,7 @@ const AdminHomePage = () => {
                   </button>
                   <button
                     type="submit"
-                    className="bg-teal-500 text-white px-4 py-2 rounded"
+                    className="bg-teal-500 text-white px-4 py-2 rounded-full"
                   >
                     Update User
                   </button>

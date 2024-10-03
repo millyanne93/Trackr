@@ -35,7 +35,7 @@ const AssignEquipmentForm = ({ users, equipmentList, onAssign }) => {
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow mb-6">
+    <div className="bg-white p-4 rounded shadow mb-6 max-w-lg">
       <h3 className="text-xl font-semibold">Assign Equipment</h3>
 
       <div className="my-4">
@@ -55,7 +55,7 @@ const AssignEquipmentForm = ({ users, equipmentList, onAssign }) => {
       </div>
 
       <div className="my-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Equipment:</label>
+        <label className="block text-sm font-medium text-gray-700 mb-1 ">Equipment:</label>
         <select
           value={selectedEquipment}
           onChange={(e) => setSelectedEquipment(e.target.value)}

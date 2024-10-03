@@ -48,7 +48,7 @@ function SendNotification() {
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow mb-6">
+    <div className="bg-white p-4 rounded shadow mb-6 max-w-lg">
       <h2 className="text-xl font-semibold">Send Notification</h2>
 
       {/* Select User Dropdown */}
