@@ -10,7 +10,6 @@ const RegularUserHomePage = () => {
   const [error, setError] = useState(null);
   const [notifications, setNotifications] = useState([]);
   const [borrowingHistory, setBorrowingHistory] = useState([]);
-  const [userId, setUserId] = useState(null); // Declare userId here
 
   // Fetch Username and set userId
   const fetchUsername = async () => {
@@ -22,7 +21,6 @@ const RegularUserHomePage = () => {
         },
       });
       setUsername(res.data.username);
-      setUserId(res.data.id); // Assuming 'id' is the user ID returned
     } catch (error) {
       console.error('Error fetching username:', error.response ? error.response.data : error.message);
     }
