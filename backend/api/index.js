@@ -1,9 +1,9 @@
 const express = require('express');
-const connectDB = require('../config/database'); // Adjusted path since it's now in api/
+const connectDB = require('../config/database');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const apiRoutes = require('../routes/api'); // Adjusted path
-const adminRoutes = require('../routes/adminRoutes'); // Adjusted path
+const apiRoutes = require('../routes/api');
+const adminRoutes = require('../routes/adminRoutes');
 
 const app = express();
 
@@ -24,5 +24,5 @@ app.use(bodyParser.json());
 app.use('/api', apiRoutes);
 app.use('/admin', adminRoutes);
 
-// Export the app (Vercel will handle starting the server)
+// Export the app for use in server.js
 module.exports = app;
