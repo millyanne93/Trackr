@@ -199,7 +199,7 @@ const AdminHomePage = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-custom-background bg-cover bg-center p-6">
       <LogoutButton />
       <h2 className="text-3xl font-bold text-teal-700 mb-6">
         Welcome, {username}!

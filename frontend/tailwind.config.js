@@ -12,6 +12,9 @@ module.exports = {
         white: '#FFFFFF',
         gray: '#757575',
       },
+      backgroundImage: {
+        'custom-background': "url('./assets/images/background.webp')",
+      },
     },
   },
   plugins: [],
