@@ -12,7 +12,7 @@ connectDB();
 
 // Configure CORS
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000', // Use env for frontend URL
+  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
   credentials: true, // Allow cookies and authentication headers
 };
 app.use(cors(corsOptions));

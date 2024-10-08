@@ -1,9 +1,10 @@
-require('dotenv').config();
+require('dotenv').config(); // Load .env file
+
 const app = require('./api/index'); // Import the app from index.js
-const connectDB = require('./config/database');
 
-// Connect to the database
-connectDB();
+const port = process.env.PORT || 3000;
 
-// Export the app for Vercel to handle starting the server
-module.exports = app;
+// Start the server
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
