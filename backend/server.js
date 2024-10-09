@@ -5,7 +5,6 @@ const connectDB = require('./config/database');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const apiRoutes = require('./routes/api');
-const adminRoutes = require('./routes/adminRoutes');
 
 // Initialize express app
 const app = express();
@@ -25,7 +24,6 @@ app.use(bodyParser.json());
 
 // Define API routes
 app.use('/api', apiRoutes);
-app.use('/admin', adminRoutes);
 
 // Define the port
 const port = process.env.PORT || 3000;
