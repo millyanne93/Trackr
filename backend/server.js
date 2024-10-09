@@ -14,8 +14,10 @@ connectDB();
 
 // Configure CORS
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000', // Use your frontend URL from .env
-  credentials: true, // Allow cookies and authentication headers
+    origin: process.env.NODE_ENV === 'production' 
+        ? 'https://trackr-kd45.vercel.app' 
+        : 'http://localhost:3000', // Use your frontend URL based on environment
+    credentials: true, // Allow cookies and authentication headers
 };
 app.use(cors(corsOptions));
 
