@@ -13,11 +13,11 @@ const app = express();
 connectDB();
 
 // Configure CORS
+// Configure CORS
 const corsOptions = {
-    origin: process.env.NODE_ENV === 'production' 
-        ? 'https://trackr-kd45.vercel.app' 
-        : 'http://localhost:3000', // Use your frontend URL based on environment
+    origin: ['https://trackr-kd45.vercel.app', 'http://localhost:3000'], // Allow both local and production URLs
     credentials: true, // Allow cookies and authentication headers
+    optionsSuccessStatus: 200, // For legacy browser support
 };
 app.use(cors(corsOptions));
 
