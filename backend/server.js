@@ -25,7 +25,10 @@ app.use(cors(corsOptions));
 app.use(bodyParser.json());
 
 // Define API routes
-app.use('/api', apiRoutes);
+app.use('/api', (req, res, next) => {
+    console.log(`Received request: ${req.method} ${req.url}`);
+    next();
+}, apiRoutes);
 
 // Define the port
 const port = process.env.PORT || 3000;
