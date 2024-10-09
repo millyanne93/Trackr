@@ -27,7 +27,7 @@ const Register = () => {
     }
 
     try {
-      const response = await axios.post('https://trackr-4cd9.vercel.app/api/register', formData);
+      const response = await axios.post('https://trackr-976f.vercel.app/api/register', formData);
 
       if (response.status === 201) {
         const { token } = response.data; // Extract the token from response

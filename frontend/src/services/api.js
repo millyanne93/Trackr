@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const api = axios.create({
-    baseURL: 'https://trackr-4cd9.vercel.app/',
+    baseURL: 'https://trackr-976f.vercel.app/',
   withCredentials: true,
   timeout: 6000,
   headers: {
