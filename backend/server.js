@@ -13,7 +13,6 @@ const app = express();
 connectDB();
 
 // Configure CORS
-// Configure CORS
 const corsOptions = {
     origin: ['https://trackr-kd45.vercel.app', 'http://localhost:3000'], // Allow both local and production URLs
     credentials: true, // Allow cookies and authentication headers
@@ -30,12 +29,17 @@ app.use('/api', (req, res, next) => {
     next();
 }, apiRoutes);
 
+// Define a simple route
+app.get("/", (req, res) => {
+    res.json({ message: "Hello World." });
+});
+
 // Define the port
 const port = process.env.PORT || 3000;
 
 // Start the server
 app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+    console.log(`Server running on port ${port}`);
 });
 
 // Export the app for Vercel
