@@ -18,7 +18,20 @@ const corsOptions = {
     credentials: true, // Allow cookies and authentication headers
     optionsSuccessStatus: 200, // For legacy browser support
 };
-app.use(cors(corsOptions));
+
+// CORS Middleware
+app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins; adjust as necessary for security
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    res.setHeader('Access-Control-Allow-Credentials', true);
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, OPTIONS, DELETE');
+    
+    // Preflight request handling
+    if (req.method === 'OPTIONS') {
+        return res.status(200).json({ body: 'OK' });
+    }
+    next();
+});
 
 // Middleware to parse JSON requests
 app.use(bodyParser.json());
