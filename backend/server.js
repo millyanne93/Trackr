@@ -12,25 +12,22 @@ const app = express();
 // Connect to the database
 connectDB();
 
-// Configure CORS
+// Configure CORS with dynamic origin handling
 const corsOptions = {
-    origin: ['https://trackr-kd45.vercel.app', 'http://localhost:3000'], // Allow both local and production URLs
+    origin: ['https://trackr-kd45.vercel.app', 'http://localhost:3000'], // Allowed specific origins
     credentials: true, // Allow cookies and authentication headers
     optionsSuccessStatus: 200, // For legacy browser support
 };
 
-// CORS Middleware
+// Apply CORS middleware with configured options
+app.use(cors(corsOptions));
+
+// Middleware to handle preflight (OPTIONS) requests
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', '*'); // Allow all origins; adjust as necessary for security
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    res.setHeader('Access-Control-Allow-Credentials', true);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, OPTIONS, DELETE');
-    
-    // Preflight request handling
     if (req.method === 'OPTIONS') {
-        return res.status(200).json({ body: 'OK' });
+        return res.status(200).json({ body: 'OK' }); // Handle OPTIONS requests
     }
-    next();
+    next(); // Proceed to the next middleware for other HTTP methods
 });
 
 // Middleware to parse JSON requests
