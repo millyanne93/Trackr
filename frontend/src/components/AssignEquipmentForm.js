@@ -11,7 +11,7 @@ const AssignEquipmentForm = ({ users, equipmentList, onAssign }) => {
   const assignEquipment = async (equipmentId, userId, returnDate) => {
     try {
       setLoading(true);
-      await api.post('/assign', { equipmentId, userId, returnDate }); // Pass returnDate to backend
+      await api.post('/api/assign', { equipmentId, userId, returnDate }); // Pass returnDate to backend
       alert('Equipment assigned successfully!');
       setSelectedUser('');
       setSelectedEquipment('');

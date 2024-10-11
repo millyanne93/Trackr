@@ -21,7 +21,7 @@ const AddEquipmentForm = () => {
 
   try {
     // Using axios, which automatically throws on non-2xx status codes
-    const response = await api.post('/equipment', newEquipment);
+    const response = await api.post('/api/equipment', newEquipment);
 
     console.log('Response data:', response.data);
     setSuccess('Equipment added successfully!');

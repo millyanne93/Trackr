@@ -44,7 +44,7 @@ const AdminHomePage = () => {
   const fetchUsername = async () => {
   try {
     const token = localStorage.getItem('token'); // or wherever you store it
-    const res = await api.get('/user/me', {
+    const res = await api.get('/api/user/me', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -60,10 +60,10 @@ const AdminHomePage = () => {
     try {
       const [summaryRes, activityRes, issuedEquipmentRes, equipmentRes] =
         await Promise.all([
-          api.get('/summary'),
-          api.get('/activity'),
-          api.get('/issued'),
-          api.get('/equipment'),
+          api.get('/api/summary'),
+          api.get('/api/activity'),
+          api.get('/api/issued'),
+          api.get('/api/equipment'),
         ]);
 
       setSummaryData(summaryRes.data);
@@ -76,7 +76,7 @@ const AdminHomePage = () => {
      const userPromises = issuedEquipmentRes.data.map(async (equipment) => {
       if (equipment.checkedOutBy) {
         try {
-          const userRes = await api.get(`/users/${equipment.checkedOutBy}`);
+          const userRes = await api.get(`/api/users/${equipment.checkedOutBy}`);
           return userRes.data;
         } catch (error) {
           // Handle case where user doesn't exist (404 error)
@@ -102,7 +102,7 @@ const AdminHomePage = () => {
 
   const fetchUsers = async (page = 1, limit = 10) => {
     try {
-      const res = await api.get(`/users?page=${page}&limit=${limit}`);
+      const res = await api.get(`/api/users?page=${page}&limit=${limit}`);
       setUsers(res.data.users);
       setTotalPages(res.data.totalPages);
       setCurrentPage(res.data.currentPage);
@@ -119,7 +119,7 @@ const AdminHomePage = () => {
 
   const handleDeleteUser = async (userId) => {
     try {
-      await api.delete(`/users/${userId}`);
+      await api.delete(`/api/users/${userId}`);
       fetchUsers(currentPage); // Refresh user list after deletion
     } catch (error) {
       console.error('Error deleting user:', error);
@@ -134,7 +134,7 @@ const AdminHomePage = () => {
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     try {
-      await api.put(`/users/${editingUser._id}`, {
+      await api.put(`/api/users/${editingUser._id}`, {
         username: editingUser.username,
         role: editingUser.role,
       });
@@ -146,7 +146,7 @@ const AdminHomePage = () => {
   };
   const fetchEquipment = async (page = 1, limit = 10) => {
     try {
-      const res = await api.get(`/equipment?page=${page}&limit=${limit}`);
+      const res = await api.get(`/api/equipment?page=${page}&limit=${limit}`);
       setEquipmentList(res.data.equipment);
       setTotalPages(res.data.totalPages);
       setCurrentPage(res.data.currentPage);
@@ -162,7 +162,7 @@ const AdminHomePage = () => {
   // Handle delete equipment
   const handleDeleteEquipment = async (equipmentId) => {
     try {
-      await api.delete(`/equipment/${equipmentId}`);
+      await api.delete(`/api/equipment/${equipmentId}`);
       fetchEquipment(currentPage); // Refresh equipment list after deletion
     } catch (error) {
       console.error('Error deleting equipment:', error);
@@ -178,7 +178,7 @@ const AdminHomePage = () => {
   const handleUpdateEquipment = async (e) => {
     e.preventDefault();
     try {
-      await api.put(`/equipment/${editingEquipment._id}`, {
+      await api.put(`/api/equipment/${editingEquipment._id}`, {
         name: editingEquipment.name,
         status: editingEquipment.status,
       });

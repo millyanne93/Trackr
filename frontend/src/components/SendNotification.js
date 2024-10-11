@@ -12,7 +12,7 @@ function SendNotification() {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get('/users');
+        const response = await api.get('/api/users');
         console.log(response.data); // Check if the data is an array
         setUsers(response.data.users || []);
       } catch (error) {
@@ -27,7 +27,7 @@ function SendNotification() {
   const sendNotification = async (userId, message) => {
     try {
       setLoading(true);
-      const response = await api.post('/notifications/send', { userId, message });
+      const response = await api.post('/api/notifications/send', { userId, message });
       setFeedback(response.data.message); // Set success message
       setSelectedUserId(''); // Reset after sending
       setMessage('');

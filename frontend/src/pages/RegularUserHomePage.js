@@ -15,7 +15,7 @@ const RegularUserHomePage = () => {
   const fetchUsername = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await api.get('/user/me', {
+      const res = await api.get('/api/user/me', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -34,7 +34,7 @@ const RegularUserHomePage = () => {
         throw new Error('No token found');
       }
 
-      const response = await api.get('/assigned', {
+      const response = await api.get('/api/assigned', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -52,7 +52,7 @@ const RegularUserHomePage = () => {
   const fetchNotifications = async () => {
     try {
       const token = Cookies.get('token');
-      const response = await api.get('/notifications', {
+      const response = await api.get('/api/notifications', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -67,7 +67,7 @@ const RegularUserHomePage = () => {
   const fetchBorrowingHistory = async () => {
     try {
       const token = Cookies.get('token');
-      const response = await api.get('/borrowing-history', {
+      const response = await api.get('/api/borrowing-history', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -100,7 +100,7 @@ const RegularUserHomePage = () => {
       setAssignedEquipment(updatedEquipment);
 
       // Make the API call to return the equipment
-      await api.put(`/return/${equipmentId}`, {}, {
+      await api.put(`/api/return/${equipmentId}`, {}, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -121,7 +121,7 @@ const RegularUserHomePage = () => {
     try {
       console.log(`Marking notification as read, ID: ${notificationId}`); // Log the notification ID
       const token = Cookies.get('token');
-      const response = await api.put(`/notifications/${notificationId}/read`, null, {
+      const response = await api.put(`/api/notifications/${notificationId}/read`, null, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -138,7 +138,7 @@ const RegularUserHomePage = () => {
     try {
       console.log(`Deleting notification, ID: ${notificationId}`); // Log the notification ID
       const token = Cookies.get('token');
-      const response = await api.delete(`/notifications/${notificationId}`, {
+      const response = await api.delete(`/api/notifications/${notificationId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
