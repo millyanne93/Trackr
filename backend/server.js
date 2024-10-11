@@ -19,12 +19,14 @@ const allowedOrigins = process.env.NODE_ENV === 'production' ?
     ['http://localhost:3000'];
 
 const corsOptions = {
-    origin: allowedOrigins,
-    credentials: true,
-    optionsSuccessStatus: 200,
+    origin: allowedOrigins, // Allow specific origins
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Allow required methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Include Authorization header
+    credentials: true, // Allow credentials if needed (e.g., for cookies)
+    optionsSuccessStatus: 200, // Some browsers (legacy) choke on 204 responses
 };
 
-// Apply CORS middleware
+// Apply CORS middleware globally
 app.use(cors(corsOptions));
 
 // Middleware to log incoming requests (using morgan)
@@ -33,12 +35,7 @@ if (process.env.NODE_ENV !== 'test') {
 }
 
 // Middleware to handle preflight (OPTIONS) requests
-app.use((req, res, next) => {
-    if (req.method === 'OPTIONS') {
-        return res.status(200).json({ body: 'OK' });
-    }
-    next();
-});
+app.options('*', cors(corsOptions)); // Preflight request handling for all routes
 
 // Middleware to parse JSON requests using body-parser
 app.use(bodyParser.json());
