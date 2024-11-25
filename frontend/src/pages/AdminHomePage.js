@@ -199,14 +199,14 @@ const AdminHomePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-custom-background bg-cover bg-center p-6">
+    <div className="min-h-screen bg-gradient-to-r from-teal-200 to-teal-100 bg-cover bg-center p-6">
       <LogoutButton />
       <h2 className="text-3xl font-bold text-teal-700 mb-6">
         Welcome, {username}!
       </h2>
 
       {/* Summary Section */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
         <h3
           className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowSummary(!showSummary)}
@@ -226,7 +226,7 @@ const AdminHomePage = () => {
       </div>
 
       {/* Activity Overview */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
         <h3
           className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowActivity(!showActivity)}
@@ -248,7 +248,7 @@ const AdminHomePage = () => {
         )}
       </div>
       {/* Equipment List Section */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
         <h3
           className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowEquipmentList(!showEquipmentList)}
@@ -354,7 +354,7 @@ const AdminHomePage = () => {
         </div>
       )}
       {/* Equipment Issued Section */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
         <h3
           className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowIssuedEquipment(!showIssuedEquipment)}
@@ -396,7 +396,7 @@ const AdminHomePage = () => {
       </div>
 
       {/* Send Notification Section */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
         <h3
           className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowSendNotification(!showSendNotification)}
@@ -407,7 +407,7 @@ const AdminHomePage = () => {
       </div>
 
       {/* Add Equipment Form */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
         <h3
           className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowAddEquipment(!showAddEquipment)}
@@ -418,7 +418,7 @@ const AdminHomePage = () => {
       </div>
 
       {/* Assign Equipment Form */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
         <h3
           className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowAssignEquipment(!showAssignEquipment)}
@@ -435,7 +435,7 @@ const AdminHomePage = () => {
       </div>
 
       {/* User Management Section */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
         <h3
           className="text-xl font-semibold cursor-pointer hover:text-teal-500"
           onClick={() => setShowUserManagement(!showUserManagement)}

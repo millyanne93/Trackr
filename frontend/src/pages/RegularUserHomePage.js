@@ -165,7 +165,7 @@ const RegularUserHomePage = () => {
       <h2 className="text-3xl font-bold text-teal-700 mb-6">Welcome, {username}!</h2>
 
       {/* Your Equipment Section */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
         <h3 className="text-xl font-semibold cursor-pointer hover:text-teal-500">Your Equipment</h3>
         {assignedEquipment && assignedEquipment.length > 0 ? (
           <ul>
@@ -187,7 +187,7 @@ const RegularUserHomePage = () => {
       </div>
 
       {/* Notifications Section */}
-      <div className="bg-white p-4 rounded shadow mb-6">
+      <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
         <h3 className="text-xl font-semibold cursor-pointer hover:text-teal-500">
           Notifications
         </h3>
@@ -223,7 +223,7 @@ const RegularUserHomePage = () => {
       </div>
 
       {/* Borrowing History Section */}
-      <div className="bg-white p-4 rounded shadow">
+      <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow">
         <h3 className="text-xl font-semibold cursor-pointer hover:text-teal-500">Borrowing History</h3>
         {borrowingHistory.length > 0 ? (
           <ul>
