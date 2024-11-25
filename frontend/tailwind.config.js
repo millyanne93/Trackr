@@ -15,7 +15,10 @@ module.exports = {
       backgroundImage: {
         'custom-background': "url('./assets/images/background.webp')",
       },
-    },
+      spacing: {
+        'footer-padding': '1rem 0',
+      }, // Closing brace added here for spacing
+    }, // Closing brace for extend
   },
   plugins: [],
 };

@@ -14,33 +14,63 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-teal-700 text-white p-4 flex justify-between items-center">
-      <h1 className="text-2xl">Trackr</h1>
-      <nav>
-        <ul className="flex space-x-4">
-          {/* General navigation links */}
-          <li><Link to="/" className="hover:underline">Home</Link></li>
-          <li><Link to="/about" className="hover:underline">About</Link></li>
-          <li><Link to="/contact" className="hover:underline">Contact</Link></li>
-          
-          {/* Role-based dashboard navigation */}
-          {token ? (
-            <>
-              <li>
-                <Link to={role === 'admin' ? '/admin-home' : '/user-home'} className="hover:underline">
-                  Dashboard
-                </Link>
-              </li>
-              <li><button onClick={handleLogout} className="hover:underline">Logout</button></li>
-            </>
-          ) : (
-            <>
-              <li><Link to="/login" className="hover:underline">Login</Link></li>
-              <li><Link to="/register" className="hover:underline">Register</Link></li> {/* Add Register link */}
-            </>
-          )}
-        </ul>
-      </nav>
+    <header className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 shadow-md">
+      <div className="flex justify-between items-center max-w-6xl mx-auto">
+        <h1 className="font-bold text-2xl text-teal-700">Trackr</h1>
+        <nav>
+          <ul className="flex space-x-4">
+            {/* General navigation links */}
+            <li>
+              <Link
+                to="/"
+                className="bg-white text-teal-700 px-4 py-2 rounded-lg shadow hover:bg-teal-100 transition"
+              >
+                Home
+              </Link>
+            </li>
+            {/* Role-based dashboard navigation */}
+            {token ? (
+              <>
+                <li>
+                  <Link
+                    to={role === 'admin' ? '/admin-home' : '/user-home'}
+                    className="bg-white text-teal-700 px-4 py-2 rounded-lg shadow hover:bg-teal-100 transition"
+                  >
+                    Dashboard
+                  </Link>
+                </li>
+                <li>
+                  <button
+                    onClick={handleLogout}
+                    className="bg-white text-teal-700 px-4 py-2 rounded-lg shadow hover:bg-teal-100 transition"
+                  >
+                    Logout
+                  </button>
+                </li>
+              </>
+            ) : (
+              <>
+                <li>
+                  <Link
+                    to="/login"
+                    className="bg-white text-teal-700 px-4 py-2 rounded-lg shadow hover:bg-teal-100 transition"
+                  >
+                    Login
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/register"
+                    className="bg-white text-teal-700 px-4 py-2 rounded-lg shadow hover:bg-teal-100 transition"
+                  >
+                    Register
+                  </Link>
+                </li>
+              </>
+            )}
+          </ul>
+        </nav>
+      </div>
     </header>
   );
 };

@@ -49,7 +49,7 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-custom-background bg-cover bg-center p-4"> {/* Apply your custom background class here */}
+    <div className="min-h-screen bg-gradient-to-r from-teal-200 to-teal-100 bg-cover bg-center p-4"> {/* Apply your custom background class here */}
       <div className="max-w-md mx-auto mt-16 p-8 bg-white rounded shadow">
         <h2 className="text-2xl text-teal-700 mb-4">Login</h2>
         {error && <p className="text-red-500 mb-4">{error}</p>}

@@ -2,8 +2,8 @@ import React from 'react';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 
 const ContactPage = () => (
-  <div className="min-h-screen bg-custom-background bg-cover bg-center p-4">
-    <h2 className="text-4xl font-bold text-teal-700 mb-6">Contact Us</h2>
+   <div className="bg-gradient-to-r from-teal-200 to-teal-100 py-20 px-4">
+    <h2 className="text-4xl text-center font-bold text-teal-700 mb-6">Contact Us</h2>
     <p className="text-lg text-gray-700 mb-6">
       We're here to help! Feel free to reach out to us for any inquiries, support requests, or feedback. Our team is ready to assist you.
     </p>

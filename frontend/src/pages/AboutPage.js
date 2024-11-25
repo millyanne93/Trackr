@@ -1,7 +1,7 @@
 import React from 'react';
 
 const AboutPage = () => (
-  <div className="min-h-screen bg-custom-background bg-cover bg-center p-4">
+  <div className="bg-gradient-to-r from-teal-200 to-teal-100 py-20 px-4">
     <h2 className="text-4xl font-bold text-teal-700 mb-4 text-center">About Trackr</h2>
     
     {/* Introduction */}
