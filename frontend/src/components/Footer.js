@@ -4,30 +4,28 @@ import { faTwitter, faLinkedin, faFacebook } from '@fortawesome/free-brands-svg-
 import { Link } from 'react-router-dom';
 
 const Footer = () => (
-  <footer className="bg-gray-400 text-black py-footer-padding mt-auto">
+  <footer className="bg-gray-500 text-black py-footer-padding mt-auto">
     <div className="max-w-6xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">
       <div>
-        <h3 className="font-semibold text-base">Trackr</h3>
+        <h3 className="font-bold text-base text-teal-900">Trackr</h3>
         <p className="text-sm">Seamlessly track and manage your equipment!</p>
       </div>
       <div>
-        <h3 className="font-semibold text-base">RESOURCES</h3>
+        <h3 className="font-bold text-base">RESOURCES</h3>
         <ul className="space-y-1">
           <li><Link to="/about" className="hover:text-teal-600 transition">About Us</Link></li>
           <li><Link to="/contact" className="hover:text-teal-600 transition">Contact</Link></li>
-          <li><Link to="/faq" className="hover:text-teal-600 transition">FAQ</Link></li>
+          <li><Link to="/FAQ" className="hover:text-teal-600 transition">FAQ</Link></li>
         </ul>
       </div>
       <div>
-        <h3 className="font-semibold text-base">COMPANY</h3>
+        <h3 className="font-bold text-base">COMPANY</h3>
         <ul className="space-y-1">
-          <li><Link to="/careers" className="hover:text-teal-600 transition">Careers</Link></li>
-          <li><Link to="/blog" className="hover:text-teal-600 transition">Blog</Link></li>
           <li><Link to="/privacy" className="hover:text-teal-600 transition">Privacy Policy</Link></li>
         </ul>
       </div>
       <div>
-        <h3 className="font-semibold text-base">FOLLOW US</h3>
+        <h3 className="font-bold text-base">FOLLOW US</h3>
         <div className="flex space-x-2">
           <a href="https://facebook.com" className="hover:text-teal-600 transition">
             <FontAwesomeIcon icon={faFacebook} />

@@ -14,7 +14,7 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 shadow-md">
+    <header className="bg-white p-4 shadow-md">
       <div className="flex justify-between items-center max-w-6xl mx-auto">
         <h1 className="font-bold text-2xl text-teal-700">Trackr</h1>
         <nav>
@@ -56,14 +56,6 @@ const Header = () => {
                     className="bg-white text-teal-700 px-4 py-2 rounded-lg shadow hover:bg-teal-100 transition"
                   >
                     Login
-                  </Link>
-                </li>
-                <li>
-                  <Link
-                    to="/register"
-                    className="bg-white text-teal-700 px-4 py-2 rounded-lg shadow hover:bg-teal-100 transition"
-                  >
-                    Register
                   </Link>
                 </li>
               </>

@@ -1,67 +1,124 @@
 import React from 'react';
-import { FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { motion } from 'framer-motion'; // For animation
+import { FaEnvelope } from 'react-icons/fa';
 
 const ContactPage = () => (
-   <div className="bg-gradient-to-r from-teal-200 to-teal-100 py-20 px-4">
-    <h2 className="text-4xl text-center font-bold text-teal-700 mb-6">Contact Us</h2>
-    <p className="text-lg text-gray-700 mb-6">
+  <div className="bg-white py-20 px-4">
+    {/* Section Title */}
+    <motion.h2
+      className="text-4xl text-center font-bold text-teal-700 mb-6"
+      initial={{ opacity: 0, y: -30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7 }}
+    >
+      Contact Us
+    </motion.h2>
+    
+    {/* Introduction */}
+    <motion.p
+      className="text-lg text-gray-700 mb-6 text-center max-w-2xl mx-auto"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, delay: 0.2 }}
+    >
       We're here to help! Feel free to reach out to us for any inquiries, support requests, or feedback. Our team is ready to assist you.
-    </p>
+    </motion.p>
 
     {/* Contact Details */}
-    <section className="text-center">
-      <h3 className="text-2xl font-semibold text-teal-600 mb-4">Our Contact Information</h3>
+    <motion.section
+      className="text-center"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, delay: 0.4 }}
+    >
       <div className="text-gray-700 mb-4">
         <FaEnvelope className="text-teal-600 mr-2 inline-block" />
         Email: <a href="mailto:millyanne254@gmail.com" className="text-teal-600 underline">millyanne254@gmail.com</a>
       </div>
-      <div className="text-gray-700 mb-4">
-        <FaPhone className="text-teal-600 mr-2 inline-block" />
-        Phone: +254721611705
-      </div>
-      <div className="text-gray-700">
-        <FaMapMarkerAlt className="text-teal-600 mr-2 inline-block" />
-        Address: 0100 Trackr, Nairobi City,
-      </div>
-    </section>
+    </motion.section>
 
     {/* Contact Form */}
-    <section className="text-center">
+    <motion.section
+      className="text-center"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, delay: 0.6 }}
+    >
       <h3 className="text-2xl font-semibold text-teal-600 mb-4 mx-auto">Send Us a Message</h3>
       <form className="bg-white p-6 rounded shadow max-w-lg mx-auto">
         <div className="mb-4">
           <label className="block text-gray-700 mb-2" htmlFor="name">Your Name</label>
-          <input type="text" id="name" className="w-full p-2 border border-gray-300 rounded" />
+          <motion.input
+            type="text"
+            id="name"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+            whileFocus={{ scale: 1.05 }}
+          />
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 mb-2" htmlFor="email">Your Email</label>
-          <input type="email" id="email" className="w-full p-2 border border-gray-300 rounded" />
+          <motion.input
+            type="email"
+            id="email"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+            whileFocus={{ scale: 1.05 }}
+          />
         </div>
         <div className="mb-4">
           <label className="block text-gray-700 mb-2" htmlFor="message">Your Message</label>
-          <textarea id="message" className="w-full p-2 border border-gray-300 rounded" rows="5"></textarea>
+          <motion.textarea
+            id="message"
+            className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-teal-500 transition"
+            rows="5"
+            whileFocus={{ scale: 1.05 }}
+          />
         </div>
-        <button type="submit" className="bg-teal-500 text-white py-2 px-4 rounded-full hover:bg-teal-600 transition">
+        <motion.button
+          type="submit"
+          className="bg-teal-500 text-white py-2 px-4 rounded-full hover:bg-teal-600 transition transform hover:scale-105"
+          whileHover={{ scale: 1.1 }}
+        >
           Send Message
-        </button>
+        </motion.button>
       </form>
-    </section>
+    </motion.section>
 
     {/* Social Media Links */}
-    <section className="text-center">
+    <motion.section
+      className="text-center mt-12"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.7, delay: 0.8 }}
+    >
       <h3 className="text-2xl font-semibold text-teal-600 mb-4">Follow Us</h3>
       <p className="text-gray-700 mb-6">Stay connected and follow our updates on social media.</p>
-      <a href="https://twitter.com/millyanne254" className="text-teal-600 mr-4" target="_blank" rel="noopener noreferrer">
+      <a
+        href="https://twitter.com/millyanne254"
+        className="text-teal-600 mr-4 hover:text-teal-500 transition"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         Twitter
       </a>
-      <a href="https://www.linkedin.com/in/millyanne-wanjala-5365306b/" className="text-teal-600 mr-4" target="_blank" rel="noopener noreferrer">
+      <a
+        href="https://www.linkedin.com/in/millyanne-wanjala-5365306b/"
+        className="text-teal-600 mr-4 hover:text-teal-500 transition"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         LinkedIn
       </a>
-      <a href="https://github.com/millyanne93" className="text-teal-600 mr-4" target="_blank" rel="noopener noreferrer">
+      <a
+        href="https://github.com/millyanne93"
+        className="text-teal-600 mr-4 hover:text-teal-500 transition"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         GitHub
       </a>
-    </section>
+    </motion.section>
   </div>
 );
 
 export default ContactPage;
+
