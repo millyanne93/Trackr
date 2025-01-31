@@ -9,6 +9,6 @@ This project aims to develop a web-based equipment tracking system to manage the
 - Generate reports on equipment usage
 
 ## Technologies
-- **Backend:** Node.js (Express)
+- **Backend:** Node.js
 - **Frontend:** React
 - **Database:** MongoDB
