@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'; // Import framer-motion
 import 'swiper/css';
 import AboutUs from './AboutPage';
 import Features from './Features';
-import Benefits from './Benefits';
+import BusinessOutcomes from './BusinessOutcomes';
 import HowItWorks from './HowItWorks';
 import Testimonial from './Testimonial';
 import Pricing from './Pricing';
@@ -93,7 +93,7 @@ const HomePage = () => {
 
         {/* Benefits Section with Improved Spacing */}
         <section className="benefits py-20 bg-white">
-          <Benefits />
+          <BusinessOutcomes />
         </section>
 
         {/* How it works Section with Background Pattern */}
