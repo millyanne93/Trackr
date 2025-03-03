@@ -21,22 +21,25 @@ const AdminHomePage = () => {
   const [users, setUsers] = useState([]);
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(true);
-  const [editingEquipment, setEditingEquipment] = useState(null);
-  const [showEditEquipmentModal, setShowEditEquipmentModal] = useState(false);
-  const [showEquipmentList, setShowEquipmentList] = useState(false);
-  const [showSendNotification, setShowSendNotification] = useState(false);
+  
+  // States for modals and visibility toggles
   const [showSummary, setShowSummary] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
+  const [showEquipmentList, setShowEquipmentList] = useState(false);
   const [showIssuedEquipment, setShowIssuedEquipment] = useState(false);
+  const [showSendNotification, setShowSendNotification] = useState(false);
   const [showAddEquipment, setShowAddEquipment] = useState(false);
-  const [showUserManagement, setShowUserManagement] = useState(false);
   const [showAssignEquipment, setShowAssignEquipment] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const [editingUser, setEditingUser] = useState(null);
+  const [showUserManagement, setShowUserManagement] = useState(false);
+  const [editingEquipment, setEditingEquipment] = useState(null);
+  const [showEditEquipmentModal, setShowEditEquipmentModal] = useState(false);
+  const [editingUser] = useState(null);
   const [showEditUserModal, setShowEditUserModal] = useState(false);
 
-  // ✅ Memoize the fetchData function using useCallback to avoid infinite loops
+  const [currentPage] = useState(1);
+  //const [totalPages, setTotalPages] = useState(0);
+
+  // Fetch data for summary, activity, issued equipment, and equipment list
   const fetchData = useCallback(async () => {
     try {
       const [summaryRes, activityRes, issuedRes, equipmentRes, usersRes] = await Promise.all([
@@ -52,16 +55,15 @@ const AdminHomePage = () => {
       setIssuedEquipment(issuedRes.data.equipment);
       setIssuedEquipmentUsers(issuedRes.data.users);
       setEquipmentList(equipmentRes.data.equipment);
-      setTotalPages(equipmentRes.data.totalPages);
       setUsers(usersRes.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
       setLoading(false);
     }
-  }, [currentPage]); // ✅ Dependencies ensure re-fetching only when currentPage changes
+  }, [currentPage]);
 
-  // ✅ Fetch the username of the logged-in admin
+  // Fetch the username of the logged-in admin
   const fetchUsername = async () => {
     try {
       const response = await api.get('/auth/me');
@@ -71,100 +73,49 @@ const AdminHomePage = () => {
     }
   };
 
-  // ✅ useEffect now safely includes fetchData without causing an infinite loop
+  // Fetch data on component mount and when currentPage changes
   useEffect(() => {
     fetchUsername();
     fetchData();
-  }, [currentPage, fetchData]); // ✅ No warning, properly optimized
+  }, [currentPage, fetchData]);
 
-  // Handle pagination
-  const handlePageChange = (newPage) => {
-    setCurrentPage(newPage);
-  };
-
-  // Handle editing equipment
-  const handleEditEquipment = (equipment) => {
-    setEditingEquipment(equipment);
-    setShowEditEquipmentModal(true);
-  };
-
-  // Handle editing user
-  const handleEditUser = (user) => {
-    setEditingUser(user);
-    setShowEditUserModal(true);
-  };
-
-  // Render loading state
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
 
   return (
-   <div className="admin-home-page bg-gray-100 min-h-screen">
-     <header className="bg-teal-600 text-white p-6 text-center shadow-md">
-       <h1 className="text-3xl font-bold">Welcome, {username}</h1>
-       <LogoutButton />
-     </header>
+    <div className="admin-home-page bg-gray-100 min-h-screen">
+      <header className="bg-teal-600 text-white p-6 text-center shadow-md">
+        <h1 className="text-3xl font-bold">Welcome, {username}</h1>
+        <LogoutButton />
+      </header>
 
-     {/* Navigation Sidebar */}
-     <div className="flex">
-       <nav className="bg-white shadow-md p-6 w-64 space-y-4">
-         <button className="block w-full bg-teal-500 text-white py-2 px-4 rounded-md" onClick={() => setShowSummary(!showSummary)}>Summary</button>
-         <button className="block w-full bg-blue-500 text-white py-2 px-4 rounded-md" onClick={() => setShowActivity(!showActivity)}>Activity Overview</button>
-         <button className="block w-full bg-green-500 text-white py-2 px-4 rounded-md" onClick={() => setShowEquipmentList(!showEquipmentList)}>Equipment List</button>
-         <button className="block w-full bg-purple-500 text-white py-2 px-4 rounded-md" onClick={() => setShowIssuedEquipment(!showIssuedEquipment)}>Issued Equipment</button>
-         <button className="block w-full bg-yellow-500 text-white py-2 px-4 rounded-md" onClick={() => setShowSendNotification(!showSendNotification)}>Send Notification</button>
-         <button className="block w-full bg-pink-500 text-white py-2 px-4 rounded-md" onClick={() => setShowAddEquipment(!showAddEquipment)}>Add Equipment</button>
-         <button className="block w-full bg-indigo-500 text-white py-2 px-4 rounded-md" onClick={() => setShowAssignEquipment(!showAssignEquipment)}>Assign Equipment</button>
-         <button className="block w-full bg-red-500 text-white py-2 px-4 rounded-md" onClick={() => setShowUserManagement(!showUserManagement)}>User Management</button>
-       </nav>
+      <div className="flex">
+        <nav className="bg-white shadow-md p-6 w-64 space-y-4">
+          <button className="block w-full bg-teal-500 text-white py-2 px-4 rounded-md" onClick={() => setShowSummary(!showSummary)}>Summary</button>
+          <button className="block w-full bg-blue-500 text-white py-2 px-4 rounded-md" onClick={() => setShowActivity(!showActivity)}>Activity Overview</button>
+          <button className="block w-full bg-green-500 text-white py-2 px-4 rounded-md" onClick={() => setShowEquipmentList(!showEquipmentList)}>Equipment List</button>
+          <button className="block w-full bg-purple-500 text-white py-2 px-4 rounded-md" onClick={() => setShowIssuedEquipment(!showIssuedEquipment)}>Issued Equipment</button>
+          <button className="block w-full bg-yellow-500 text-white py-2 px-4 rounded-md" onClick={() => setShowSendNotification(!showSendNotification)}>Send Notification</button>
+          <button className="block w-full bg-pink-500 text-white py-2 px-4 rounded-md" onClick={() => setShowAddEquipment(!showAddEquipment)}>Add Equipment</button>
+          <button className="block w-full bg-indigo-500 text-white py-2 px-4 rounded-md" onClick={() => setShowAssignEquipment(!showAssignEquipment)}>Assign Equipment</button>
+          <button className="block w-full bg-red-500 text-white py-2 px-4 rounded-md" onClick={() => setShowUserManagement(!showUserManagement)}>User Management</button>
+        </nav>
 
-       {/* Main Content */}
-       <main className="flex-grow p-8">
-         {showSummary && <SummarySection data={summaryData} />}
-         {showActivity && <ActivityOverview data={activityData} />}
-         {showEquipmentList && (
-           <EquipmentList
-             equipment={equipmentList}
-             onEdit={handleEditEquipment}
-             currentPage={currentPage}
-             totalPages={totalPages}
-             onPageChange={handlePageChange}
-           />
-         )}
-         {showIssuedEquipment && <IssuedEquipment equipment={issuedEquipment} users={issuedEquipmentUsers} />}
-         {showSendNotification && <SendNotificationSection />}
-         {showAddEquipment && <AddEquipmentSection onAdd={() => fetchData()} />}
-         {showAssignEquipment && <AssignEquipmentSection />}
-         {showUserManagement && <UserManagementSection users={users} onEdit={handleEditUser} />}
-       </main>
-     </div>
+        <main className="flex-grow p-8">
+          {showSummary && <SummarySection data={summaryData} showSummary={showSummary} setShowSummary={setShowSummary} />}
+          {showActivity && <ActivityOverview data={activityData} showActivity={showActivity} setShowActivity={setShowActivity} />}
+          {showEquipmentList && <EquipmentList equipment={equipmentList} onEdit={setEditingEquipment} />}
+          {showIssuedEquipment && <IssuedEquipment equipment={issuedEquipment} users={issuedEquipmentUsers} showIssuedEquipment={showIssuedEquipment} setShowIssuedEquipment={setShowIssuedEquipment} />}
+          {showSendNotification && <SendNotificationSection showSendNotification={showSendNotification} setShowSendNotification={setShowSendNotification} />}
+          {showAddEquipment && <AddEquipmentSection showAddEquipment={showAddEquipment} setShowAddEquipment={setShowAddEquipment} />}
+          {showAssignEquipment && <AssignEquipmentSection showAssignEquipment={showAssignEquipment} setShowAssignEquipment={setShowAssignEquipment} />}
+          {showUserManagement && <UserManagementSection users={users} showUserManagement={showUserManagement} setShowUserManagement={setShowUserManagement} />}
+        </main>
+      </div>
 
-     {/* Modals */}
-     {showEditEquipmentModal && (
-       <EditEquipmentModal
-         equipment={editingEquipment}
-         onClose={() => setShowEditEquipmentModal(false)}
-         onSave={() => {
-           fetchData();
-           setShowEditEquipmentModal(false);
-         }}
-       />
-     )}
-
-     {showEditUserModal && (
-       <EditUserModal
-         user={editingUser}
-         onClose={() => setShowEditUserModal(false)}
-         onSave={() => {
-           fetchData();
-           setShowEditUserModal(false);
-         }}
-       />
-     )}
-   </div>
- );
- 
+      {showEditEquipmentModal && <EditEquipmentModal equipment={editingEquipment} onClose={() => setShowEditEquipmentModal(false)} />}
+      {showEditUserModal && <EditUserModal user={editingUser} onClose={() => setShowEditUserModal(false)} />}
+    </div>
+  );
 };
 
 export default AdminHomePage;
