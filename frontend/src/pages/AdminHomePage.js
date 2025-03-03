@@ -21,8 +21,7 @@ const AdminHomePage = () => {
   const [users, setUsers] = useState([]);
   const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(true);
-  
-  // States for modals and visibility toggles
+
   const [showSummary, setShowSummary] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
   const [showEquipmentList, setShowEquipmentList] = useState(false);
@@ -33,29 +32,49 @@ const AdminHomePage = () => {
   const [showUserManagement, setShowUserManagement] = useState(false);
   const [editingEquipment, setEditingEquipment] = useState(null);
   const [showEditEquipmentModal, setShowEditEquipmentModal] = useState(false);
-  const [editingUser] = useState(null);
+  const [editingUser, setEditingUser] = useState(null);
   const [showEditUserModal, setShowEditUserModal] = useState(false);
 
-  const [currentPage] = useState(1);
-  //const [totalPages, setTotalPages] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
 
-  // Fetch data for summary, activity, issued equipment, and equipment list
   const fetchData = useCallback(async () => {
     try {
       const [summaryRes, activityRes, issuedRes, equipmentRes, usersRes] = await Promise.all([
-        api.get('/summary'),
-        api.get('/activity'),
-        api.get('/issued-equipment'),
-        api.get('/equipment', { params: { page: currentPage } }),
-        api.get('/users'),
+        api.get('/api/summary'),
+        api.get('/api/activity'),
+        api.get('/api/issued'),
+        api.get('/api/equipment', { params: { page: currentPage } }),
+        api.get('/api/users'),
       ]);
 
       setSummaryData(summaryRes.data);
       setActivityData(activityRes.data);
-      setIssuedEquipment(issuedRes.data.equipment);
-      setIssuedEquipmentUsers(issuedRes.data.users);
-      setEquipmentList(equipmentRes.data.equipment);
+      setIssuedEquipment(issuedRes.data);
+      setEquipmentList(equipmentRes.data);
       setUsers(usersRes.data);
+
+      // Fetch users for issued equipment
+      const userPromises = issuedRes.data.map(async (equipment) => {
+        if (equipment.checkedOutBy) {
+          try {
+            const userRes = await api.get(`/api/users/${equipment.checkedOutBy}`);
+            return userRes.data;
+          } catch (error) {
+            if (error.response && error.response.status === 404) {
+              console.warn(`User with ID ${equipment.checkedOutBy} not found.`);
+              return { username: 'User Deleted' };
+            } else {
+              console.error('Error fetching user:', error);
+              return null;
+            }
+          }
+        }
+        return null;
+      });
+
+      const resolvedUsers = await Promise.all(userPromises);
+      setIssuedEquipmentUsers(resolvedUsers);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -63,21 +82,79 @@ const AdminHomePage = () => {
     }
   }, [currentPage]);
 
-  // Fetch the username of the logged-in admin
   const fetchUsername = async () => {
     try {
-      const response = await api.get('/auth/me');
+      const response = await api.get('/api/user/me');
       setUsername(response.data.username);
     } catch (error) {
       console.error('Error fetching username:', error);
     }
   };
 
-  // Fetch data on component mount and when currentPage changes
   useEffect(() => {
     fetchUsername();
     fetchData();
   }, [currentPage, fetchData]);
+
+  const handleDeleteEquipment = async (equipmentId) => {
+    try {
+      await api.delete(`/api/equipment/${equipmentId}`);
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting equipment:', error);
+    }
+  };
+
+  const handleEditEquipment = (equipment) => {
+    setEditingEquipment(equipment);
+    setShowEditEquipmentModal(true);
+  };
+
+  const handleUpdateEquipment = async (e) => {
+    e.preventDefault();
+    try {
+      await api.put(`/api/equipment/${editingEquipment._id}`, {
+        name: editingEquipment.name,
+        status: editingEquipment.status,
+      });
+      setShowEditEquipmentModal(false);
+      fetchData();
+    } catch (error) {
+      console.error('Error updating equipment:', error);
+    }
+  };
+
+  const handleDeleteUser = async (userId) => {
+    try {
+      await api.delete(`/api/users/${userId}`);
+      fetchData();
+    } catch (error) {
+      console.error('Error deleting user:', error);
+    }
+  };
+
+  const handleEditUser = (user) => {
+    setEditingUser(user);
+    setShowEditUserModal(true);
+  };
+
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+    try {
+      await api.put(`/api/users/${editingUser._id}`, {
+        username: editingUser.username,
+        role: editingUser.role,
+      });
+      setShowEditUserModal(false);
+      fetchData();
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  };
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   if (loading) return <div>Loading...</div>;
 
@@ -103,17 +180,70 @@ const AdminHomePage = () => {
         <main className="flex-grow p-8">
           {showSummary && <SummarySection data={summaryData} showSummary={showSummary} setShowSummary={setShowSummary} />}
           {showActivity && <ActivityOverview data={activityData} showActivity={showActivity} setShowActivity={setShowActivity} />}
-          {showEquipmentList && <EquipmentList equipment={equipmentList} onEdit={setEditingEquipment} />}
-          {showIssuedEquipment && <IssuedEquipment equipment={issuedEquipment} users={issuedEquipmentUsers} showIssuedEquipment={showIssuedEquipment} setShowIssuedEquipment={setShowIssuedEquipment} />}
+          {showEquipmentList && (
+            <EquipmentList
+              equipment={equipmentList}
+              showEquipmentList={showEquipmentList}
+              setShowEquipmentList={setShowEquipmentList}
+              handleEditEquipment={handleEditEquipment}
+              handleDeleteEquipment={handleDeleteEquipment}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              handlePageChange={handlePageChange}
+            />
+          )}
+          {showIssuedEquipment && (
+            <IssuedEquipment
+              equipment={issuedEquipment}
+              users={issuedEquipmentUsers}
+              showIssuedEquipment={showIssuedEquipment}
+              setShowIssuedEquipment={setShowIssuedEquipment}
+            />
+          )}
           {showSendNotification && <SendNotificationSection showSendNotification={showSendNotification} setShowSendNotification={setShowSendNotification} />}
           {showAddEquipment && <AddEquipmentSection showAddEquipment={showAddEquipment} setShowAddEquipment={setShowAddEquipment} />}
-          {showAssignEquipment && <AssignEquipmentSection showAssignEquipment={showAssignEquipment} setShowAssignEquipment={setShowAssignEquipment} />}
-          {showUserManagement && <UserManagementSection users={users} showUserManagement={showUserManagement} setShowUserManagement={setShowUserManagement} />}
+          {showAssignEquipment && (
+            <AssignEquipmentSection
+              showAssignEquipment={showAssignEquipment}
+              setShowAssignEquipment={setShowAssignEquipment}
+              users={users}
+              equipmentList={equipmentList}
+              fetchData={fetchData}
+            />
+          )}
+          {showUserManagement && (
+            <UserManagementSection
+              users={users}
+              showUserManagement={showUserManagement}
+              setShowUserManagement={setShowUserManagement}
+              handleEditUser={handleEditUser}
+              handleDeleteUser={handleDeleteUser}
+              totalPages={totalPages}
+              currentPage={currentPage}
+              handlePageChange={handlePageChange}
+            />
+          )}
         </main>
       </div>
 
-      {showEditEquipmentModal && <EditEquipmentModal equipment={editingEquipment} onClose={() => setShowEditEquipmentModal(false)} />}
-      {showEditUserModal && <EditUserModal user={editingUser} onClose={() => setShowEditUserModal(false)} />}
+      {showEditEquipmentModal && (
+        <EditEquipmentModal
+          equipment={editingEquipment}
+          setEditingEquipment={setEditingEquipment}
+          showEditEquipmentModal={showEditEquipmentModal}
+          setShowEditEquipmentModal={setShowEditEquipmentModal}
+          handleUpdateEquipment={handleUpdateEquipment}
+        />
+      )}
+      {showEditUserModal && (
+        <EditUserModal
+          user={editingUser}
+          setEditingUser={setEditingUser}
+          showEditUserModal={showEditUserModal}
+          setShowEditUserModal={setShowEditUserModal}
+          handleUpdateUser={handleUpdateUser}
+        />
+      )}
     </div>
   );
 };
