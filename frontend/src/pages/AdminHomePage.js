@@ -100,73 +100,71 @@ const AdminHomePage = () => {
   }
 
   return (
-    <div className="admin-home-page">
-      <header>
-        <h1>Welcome, {username}</h1>
-        <LogoutButton />
-      </header>
+   <div className="admin-home-page bg-gray-100 min-h-screen">
+     <header className="bg-teal-600 text-white p-6 text-center shadow-md">
+       <h1 className="text-3xl font-bold">Welcome, {username}</h1>
+       <LogoutButton />
+     </header>
 
-      <nav>
-        <button onClick={() => setShowSummary(!showSummary)}>Summary</button>
-        <button onClick={() => setShowActivity(!showActivity)}>Activity Overview</button>
-        <button onClick={() => setShowEquipmentList(!showEquipmentList)}>Equipment List</button>
-        <button onClick={() => setShowIssuedEquipment(!showIssuedEquipment)}>Issued Equipment</button>
-        <button onClick={() => setShowSendNotification(!showSendNotification)}>Send Notification</button>
-        <button onClick={() => setShowAddEquipment(!showAddEquipment)}>Add Equipment</button>
-        <button onClick={() => setShowAssignEquipment(!showAssignEquipment)}>Assign Equipment</button>
-        <button onClick={() => setShowUserManagement(!showUserManagement)}>User Management</button>
-      </nav>
+     {/* Navigation Sidebar */}
+     <div className="flex">
+       <nav className="bg-white shadow-md p-6 w-64 space-y-4">
+         <button className="block w-full bg-teal-500 text-white py-2 px-4 rounded-md" onClick={() => setShowSummary(!showSummary)}>Summary</button>
+         <button className="block w-full bg-blue-500 text-white py-2 px-4 rounded-md" onClick={() => setShowActivity(!showActivity)}>Activity Overview</button>
+         <button className="block w-full bg-green-500 text-white py-2 px-4 rounded-md" onClick={() => setShowEquipmentList(!showEquipmentList)}>Equipment List</button>
+         <button className="block w-full bg-purple-500 text-white py-2 px-4 rounded-md" onClick={() => setShowIssuedEquipment(!showIssuedEquipment)}>Issued Equipment</button>
+         <button className="block w-full bg-yellow-500 text-white py-2 px-4 rounded-md" onClick={() => setShowSendNotification(!showSendNotification)}>Send Notification</button>
+         <button className="block w-full bg-pink-500 text-white py-2 px-4 rounded-md" onClick={() => setShowAddEquipment(!showAddEquipment)}>Add Equipment</button>
+         <button className="block w-full bg-indigo-500 text-white py-2 px-4 rounded-md" onClick={() => setShowAssignEquipment(!showAssignEquipment)}>Assign Equipment</button>
+         <button className="block w-full bg-red-500 text-white py-2 px-4 rounded-md" onClick={() => setShowUserManagement(!showUserManagement)}>User Management</button>
+       </nav>
 
-      {showSummary && <SummarySection data={summaryData} />}
-      {showActivity && <ActivityOverview data={activityData} />}
-      {showEquipmentList && (
-        <EquipmentList
-          equipment={equipmentList}
-          onEdit={handleEditEquipment}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      )}
-      {showIssuedEquipment && (
-        <IssuedEquipment
-          equipment={issuedEquipment}
-          users={issuedEquipmentUsers}
-        />
-      )}
-      {showSendNotification && <SendNotificationSection />}
-      {showAddEquipment && <AddEquipmentSection onAdd={() => fetchData()} />}
-      {showAssignEquipment && <AssignEquipmentSection />}
-      {showUserManagement && (
-        <UserManagementSection
-          users={users}
-          onEdit={handleEditUser}
-        />
-      )}
+       {/* Main Content */}
+       <main className="flex-grow p-8">
+         {showSummary && <SummarySection data={summaryData} />}
+         {showActivity && <ActivityOverview data={activityData} />}
+         {showEquipmentList && (
+           <EquipmentList
+             equipment={equipmentList}
+             onEdit={handleEditEquipment}
+             currentPage={currentPage}
+             totalPages={totalPages}
+             onPageChange={handlePageChange}
+           />
+         )}
+         {showIssuedEquipment && <IssuedEquipment equipment={issuedEquipment} users={issuedEquipmentUsers} />}
+         {showSendNotification && <SendNotificationSection />}
+         {showAddEquipment && <AddEquipmentSection onAdd={() => fetchData()} />}
+         {showAssignEquipment && <AssignEquipmentSection />}
+         {showUserManagement && <UserManagementSection users={users} onEdit={handleEditUser} />}
+       </main>
+     </div>
 
-      {showEditEquipmentModal && (
-        <EditEquipmentModal
-          equipment={editingEquipment}
-          onClose={() => setShowEditEquipmentModal(false)}
-          onSave={() => {
-            fetchData();
-            setShowEditEquipmentModal(false);
-          }}
-        />
-      )}
+     {/* Modals */}
+     {showEditEquipmentModal && (
+       <EditEquipmentModal
+         equipment={editingEquipment}
+         onClose={() => setShowEditEquipmentModal(false)}
+         onSave={() => {
+           fetchData();
+           setShowEditEquipmentModal(false);
+         }}
+       />
+     )}
 
-      {showEditUserModal && (
-        <EditUserModal
-          user={editingUser}
-          onClose={() => setShowEditUserModal(false)}
-          onSave={() => {
-            fetchData();
-            setShowEditUserModal(false);
-          }}
-        />
-      )}
-    </div>
-  );
+     {showEditUserModal && (
+       <EditUserModal
+         user={editingUser}
+         onClose={() => setShowEditUserModal(false)}
+         onSave={() => {
+           fetchData();
+           setShowEditUserModal(false);
+         }}
+       />
+     )}
+   </div>
+ );
+ 
 };
 
 export default AdminHomePage;
