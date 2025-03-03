@@ -1,10 +1,10 @@
 import React from 'react';
 
 const EditUserModal = ({
+  user,
+  setEditingUser,
   showEditUserModal,
   setShowEditUserModal,
-  editingUser,
-  setEditingUser,
   handleUpdateUser,
 }) => {
   return (
@@ -20,9 +20,9 @@ const EditUserModal = ({
                 <input
                   type="text"
                   className="w-full border border-gray-300 p-2 rounded"
-                  value={editingUser.username}
+                  value={user.username}
                   onChange={(e) =>
-                    setEditingUser({ ...editingUser, username: e.target.value })
+                    setEditingUser({ ...user, username: e.target.value })
                   }
                 />
               </div>
@@ -30,9 +30,9 @@ const EditUserModal = ({
                 <label className="block text-gray-700">Role:</label>
                 <select
                   className="w-full border border-gray-300 p-2 rounded"
-                  value={editingUser.role}
+                  value={user.role}
                   onChange={(e) =>
-                    setEditingUser({ ...editingUser, role: e.target.value })
+                    setEditingUser({ ...user, role: e.target.value })
                   }
                 >
                   <option value="user">User</option>

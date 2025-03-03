@@ -1,6 +1,11 @@
 import React from 'react';
 
-const IssuedEquipment = ({ issuedEquipment, issuedEquipmentUsers, showIssuedEquipment, setShowIssuedEquipment }) => {
+const IssuedEquipment = ({
+  issuedEquipment,
+  issuedEquipmentUsers,
+  showIssuedEquipment,
+  setShowIssuedEquipment,
+}) => {
   return (
     <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
       <h3
@@ -31,7 +36,9 @@ const IssuedEquipment = ({ issuedEquipment, issuedEquipmentUsers, showIssuedEqui
                     {new Date(equipment.checkedOutAt).toLocaleDateString()}
                   </td>
                   <td className="border px-4 py-2">
-                    {equipment.returnDate ? new Date(equipment.returnDate).toLocaleDateString() : 'N/A'}
+                    {equipment.returnDate
+                      ? new Date(equipment.returnDate).toLocaleDateString()
+                      : 'N/A'}
                   </td>
                 </tr>
               ))}

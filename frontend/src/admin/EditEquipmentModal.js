@@ -1,10 +1,10 @@
 import React from 'react';
 
 const EditEquipmentModal = ({
+  equipment,
+  setEditingEquipment,
   showEditEquipmentModal,
   setShowEditEquipmentModal,
-  editingEquipment,
-  setEditingEquipment,
   handleUpdateEquipment,
 }) => {
   return (
@@ -20,9 +20,9 @@ const EditEquipmentModal = ({
                 <input
                   type="text"
                   className="w-full border border-gray-300 p-2 rounded"
-                  value={editingEquipment.name}
+                  value={equipment.name}
                   onChange={(e) =>
-                    setEditingEquipment({ ...editingEquipment, name: e.target.value })
+                    setEditingEquipment({ ...equipment, name: e.target.value })
                   }
                 />
               </div>
@@ -31,9 +31,9 @@ const EditEquipmentModal = ({
                 <input
                   type="text"
                   className="w-full border border-gray-300 p-2 rounded"
-                  value={editingEquipment.status}
+                  value={equipment.status}
                   onChange={(e) =>
-                    setEditingEquipment({ ...editingEquipment, status: e.target.value })
+                    setEditingEquipment({ ...equipment, status: e.target.value })
                   }
                 />
               </div>

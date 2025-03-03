@@ -1,7 +1,10 @@
 import React from 'react';
 import SendNotification from '../components/SendNotification';
 
-const SendNotificationSection = ({ showSendNotification, setShowSendNotification }) => {
+const SendNotificationSection = ({
+  showSendNotification,
+  setShowSendNotification,
+}) => {
   return (
     <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
       <h3
