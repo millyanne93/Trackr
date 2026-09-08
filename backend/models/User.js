@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema({
   tokens: [{ token: String }]
 });
 
-// Password hashing middleware
 userSchema.pre('save', function (next) {
   if (!this.isModified('password')) return next();
 
@@ -23,7 +22,7 @@ userSchema.pre('save', function (next) {
 userSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
-// Generate a token for the user
+
 userSchema.methods.generateAuthToken = async function () {
   const token = jwt.sign({ id: this._id, role: this.role, username: this.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
   this.tokens = this.tokens.concat({ token });

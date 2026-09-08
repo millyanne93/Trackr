@@ -3,14 +3,13 @@ const User = require('../models/User');
 const mongoose = require('mongoose');
 const History = require('../models/History');
 
-// Get all equipment with pagination
 exports.getAllEquipment = async (req, res) => {
-  const { page = 1, limit = 10 } = req.query; // Get page and limit from query, default to page 1 and limit 10
+  const { page = 1, limit = 10 } = req.query;
   try {
     const equipment = await Equipment.find()
-      .skip((page - 1) * limit) // Pagination logic
+      .skip((page - 1) * limit) 
       .limit(parseInt(limit));
-    const totalEquipment = await Equipment.countDocuments(); // Total equipment count for pagination
+    const totalEquipment = await Equipment.countDocuments();
 
     res.json({
       equipment,
@@ -23,11 +22,9 @@ exports.getAllEquipment = async (req, res) => {
   }
 };
 
-// Get a single piece of equipment by ID
 exports.getEquipmentById = async (req, res) => {
   const equipmentId = req.params.id;
 
-  // Check if the equipmentId is a valid ObjectId
   if (!mongoose.Types.ObjectId.isValid(equipmentId)) {
     return res.status(400).json({ message: 'Invalid equipment ID' });
   }
@@ -44,70 +41,62 @@ exports.getEquipmentById = async (req, res) => {
   }
 };
 
-// Create new equipment
 exports.createEquipment = async (req, res) => {
   try {
-    console.log('Received data for new equipment:', req.body); // Log the received data
+    console.log('Received data for new equipment:', req.body); 
 
     const newEquipment = new Equipment(req.body);
     await newEquipment.save();
 
-    console.log('Equipment created successfully:', newEquipment); // Log success
+    console.log('Equipment created successfully:', newEquipment);
     res.status(201).json(newEquipment);
   } catch (error) {
-    console.error('Error creating equipment:', error); // Log the error
+    console.error('Error creating equipment:', error);
     if (error.name === 'ValidationError') {
-      // Mongoose validation error
       res.status(400).json({ message: 'Validation error', error: error.message });
     } else {
-      // General server error
       res.status(500).json({ message: 'Server error', error: error.message });
     }
   }
 };
 
-// Update equipment by ID
 exports.updateEquipment = async (req, res) => {
   try {
     const updatedEquipment = await Equipment.findByIdAndUpdate(req.params.id, req.body, { new: true });
     if (!updatedEquipment) {
       return res.status(404).json({ message: 'Equipment not found' });
     }
-    console.log('Equipment updated successfully:', updatedEquipment); // Log success
+    console.log('Equipment updated successfully:', updatedEquipment); 
     res.json(updatedEquipment);
   } catch (err) {
-    console.error('Error updating equipment:', err); // Log the error
+    console.error('Error updating equipment:', err); 
     res.status(500).send('Server error');
   }
 };
 
-// Delete equipment by ID
 exports.deleteEquipment = async (req, res) => {
   try {
     const deletedEquipment = await Equipment.findByIdAndDelete(req.params.id);
     if (!deletedEquipment) {
       return res.status(404).json({ message: 'Equipment not found' });
     }
-    console.log('Equipment deleted successfully:', deletedEquipment); // Log success
+    console.log('Equipment deleted successfully:', deletedEquipment);
     res.json({ message: 'Equipment deleted successfully' });
   } catch (err) {
-    console.error('Error deleting equipment:', err); // Log the error
+    console.error('Error deleting equipment:', err);
     res.status(500).send('Server error');
   }
 };
 
-// Get summary
 exports.getSummary = async (req, res) => {
   try {
-    // Calculate total equipment, issued equipment, available equipment
+
     const totalEquipment = await Equipment.countDocuments();
     const issuedEquipment = await Equipment.countDocuments({ status: "issued" });
     const availableEquipment = totalEquipment - issuedEquipment;
 
-    // Calculate total users
     const totalUsers = await User.countDocuments();
 
-    // Send the summary data to the frontend
     res.json({ totalEquipment, issuedEquipment, availableEquipment, totalUsers });
   } catch (err) {
     console.error('Error fetching summary:', err);
@@ -115,10 +104,9 @@ exports.getSummary = async (req, res) => {
   }
 };
 
-// Get activity overview
 exports.getActivity = async (req, res) => {
   try {
-    // Your logic to get activity overview, such as recent checkouts/check-ins
+
     const activityData = await Equipment.find({}).sort({ checkedOutAt: -1 }).limit(10);
     res.json(activityData);
   } catch (err) {
@@ -127,7 +115,6 @@ exports.getActivity = async (req, res) => {
   }
 };
 
-// Get issued equipment
 exports.getIssuedEquipment = async (req, res) => {
   try {
     const issuedEquipment = await Equipment.find({ status: "issued" });
@@ -138,7 +125,6 @@ exports.getIssuedEquipment = async (req, res) => {
   }
 };
 
-// Assign equipment to a user
 exports.assignEquipment = async (req, res) => {
   const { equipmentId, userId, returnDate } = req.body;
 
@@ -158,7 +144,6 @@ exports.assignEquipment = async (req, res) => {
       return res.status(400).json({ message: 'Equipment is already issued' });
     }
 
-    // Assign the equipment to the user
     equipment.checkedOutBy = user._id;
     equipment.checkedOutAt = new Date();
     equipment.status = 'issued';
@@ -166,7 +151,6 @@ exports.assignEquipment = async (req, res) => {
 
     await equipment.save();
 
-    // Add borrowing history
     const historyEntry = new History({
       equipmentId: equipment._id,
       userId: user._id,
@@ -176,10 +160,8 @@ exports.assignEquipment = async (req, res) => {
 
     await historyEntry.save();
 
-    // Fetch the latest history for the equipment
     const history = await History.find({ equipmentId: equipment._id }).populate('userId', 'username');
 
-    // Prepare response
     const responseEquipment = {
       ...equipment._doc,
       history: history.map(entry => ({
@@ -214,7 +196,6 @@ exports.getAssignedEquipment = async (req, res) => {
     const assignedEquipment = await Equipment.find({ checkedOutBy: objectId });
     console.log("Assigned equipment:", assignedEquipment);
 
-    // Instead of sending a 404, return an empty list if no equipment is assigned
     res.status(200).json({ equipment: assignedEquipment || [] });
   } catch (error) {
     console.error('Error fetching assigned equipment:', error);
@@ -222,32 +203,26 @@ exports.getAssignedEquipment = async (req, res) => {
   }
 };
 
-
-// Return equipment
-// Return equipment
 exports.returnEquipment = async (req, res) => {
   try {
     const equipment = await Equipment.findById(req.params.id);
 
-    // Check if equipment exists and is assigned to the current user
     if (!equipment || equipment.checkedOutBy?.toString() !== req.user._id.toString()) {
       return res.status(404).json({ message: 'Equipment not found or not assigned to this user' });
     }
 
-    // Mark as returned
-    equipment.checkedOutBy = null;  // Clear the assigned user
-    equipment.checkedOutAt = null;  // Clear the checkout date
-    equipment.status = 'available';  // Mark the equipment as available
+    equipment.checkedOutBy = null;
+    equipment.checkedOutAt = null;
+    equipment.status = 'available';
 
-    // Ensure history is updated
     const history = await History.findOne({
       equipmentId: equipment._id,
       userId: req.user._id,
-      returnedAt: null, // Only update if not yet returned
+      returnedAt: null, 
     });
 
     if (history) {
-      history.returnedAt = new Date(); // Update the return date
+      history.returnedAt = new Date(); 
       await history.save();
     }
 
@@ -264,18 +239,22 @@ exports.getBorrowingHistory = async (req, res) => {
   try {
     const userId = req.user._id;
 
-    // Find all history records where the userId matches the current user
     const borrowingHistory = await History.find({ userId })
-      .populate('equipmentId', 'name') // Populate the equipment name
-      .populate('userId', 'username'); // Populate the username
+      .populate('equipmentId', 'name') 
+      .populate('userId', 'username'); 
 
-    if (!borrowingHistory || borrowingHistory.length === 0) {
-      return res.status(404).json({ message: 'No borrowing history found for this user' });
-    }
 
-    res.status(200).json({ borrowingHistory });
+    res.status(200).json({ 
+      success: true,
+      borrowingHistory: borrowingHistory || [],
+      count: borrowingHistory.length
+    });
+
   } catch (error) {
     console.error('Error fetching borrowing history:', error);
-    res.status(500).json({ message: 'An error occurred while fetching the borrowing history' });
+    res.status(500).json({
+      sucess: false,
+      message: 'An error occurred while fetching the borrowing history' 
+    });
   }
 };

@@ -23,5 +23,4 @@ describe('Admin Controller', () => {
     expect(res.body).toBeInstanceOf(Array);
   });
 
-  // Additional tests for other controller methods
 });

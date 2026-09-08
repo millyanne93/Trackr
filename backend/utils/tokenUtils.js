@@ -11,9 +11,9 @@ const decodeToken = (token) => {
 
 const checkIfTokenExpired = (token) => {
   const decoded = decodeToken(token);
-  if (!decoded) return true; // Token is invalid if decoding fails
+  if (!decoded) return true; 
 
-  const currentTime = Math.floor(Date.now() / 1000); // Current time in seconds
+  const currentTime = Math.floor(Date.now() / 1000); 
   const expirationTime = decoded.exp;
 
   return expirationTime < currentTime;

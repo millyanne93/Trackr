@@ -4,43 +4,91 @@ const equipmentController = require('../controllers/equipmentController');
 const userController = require('../controllers/userController');
 const { getUserProfile } = require('../controllers/userController');
 const { authMiddleware, isAdmin } = require('../config/auth');
+const { validators, validatePayloadSize, honeypotCheck } = require('../middleware/validation');
+const rateLimiters = require('../middleware/rateLimiter');
 
 console.log('userController:', userController);
 console.log('authMiddleware:', authMiddleware);
 console.log('isAdmin:', isAdmin);
 
-// Equipment routes
-router.get('/equipment', equipmentController.getAllEquipment);
-router.get('/equipment/:id', equipmentController.getEquipmentById);
-router.post('/equipment', authMiddleware, isAdmin, equipmentController.createEquipment);
-router.put('/equipment/:id', authMiddleware, isAdmin, equipmentController.updateEquipment);
-router.delete('/equipment/:id', authMiddleware, isAdmin, equipmentController.deleteEquipment);
+router.post(
+    '/register',
+    rateLimiters.auth,
+    validatePayloadSize,
+    validators.register,
+    honeypotCheck,
+    userController.registerUser
+);
 
-// Additional equipment-related routes
-router.get('/summary', authMiddleware, isAdmin, equipmentController.getSummary);
-router.get('/activity', authMiddleware, isAdmin, equipmentController.getActivity);
-router.get('/issued', authMiddleware, equipmentController.getIssuedEquipment);
-router.post('/assign', authMiddleware, isAdmin, equipmentController.assignEquipment);
-router.put('/return/:id', authMiddleware, equipmentController.returnEquipment);
-router.get('/assigned', authMiddleware, equipmentController.getAssignedEquipment);
-router.get('/borrowing-history', authMiddleware, equipmentController.getBorrowingHistory);
+router.post(
+    '/login',
+    rateLimiters.auth,
+    validatePayloadSize,
+    validators.login,
+    userController.loginUser
+);
 
-// User routes
-router.post('/register', userController.registerUser);
-router.post('/login', userController.loginUser);
-router.post('/logout', authMiddleware, userController.logoutUser); // Ensure only logged-in users can logout
+router.post('/logout', authMiddleware, userController.logoutUser);
 
-// Routes for user management and fetching user details
-router.get('/users', authMiddleware, isAdmin, userController.getAllUsers);
-router.get('/users/:id', authMiddleware, isAdmin, userController.getUserById);
-router.put('/users/:id', authMiddleware, isAdmin, userController.updateUser);
-router.delete('/users/:id', authMiddleware, isAdmin, userController.deleteUser);
+router.get('/equipment', rateLimiters.general, equipmentController.getAllEquipment);
 
-// Route to get current user's details based on the JWT token
+router.get('/equipment/:id', rateLimiters.general, equipmentController.getEquipmentById);
+
+router.post(
+    '/equipment',
+    authMiddleware,
+    isAdmin,
+    rateLimiters.equipment,
+    validatePayloadSize,
+    validators.createEquipment,
+    equipmentController.createEquipment
+);
+
+router.put(
+    '/equipment/:id',
+    authMiddleware,
+    isAdmin,
+    validatePayloadSize,
+    validators.updateEquipment,
+    equipmentController.updateEquipment
+);
+
+router.delete('/equipment/:id', authMiddleware, isAdmin, rateLimiters.general, equipmentController.deleteEquipment);
+
+router.get('/summary', authMiddleware, isAdmin, rateLimiters.general, equipmentController.getSummary);
+router.get('/activity', authMiddleware, isAdmin, rateLimiters.general, equipmentController.getActivity);
+router.get('/issued', authMiddleware, rateLimiters.general, equipmentController.getIssuedEquipment);
+
+router.post(
+    '/assign',
+    authMiddleware,
+    isAdmin,
+    validatePayloadSize,
+    validators.assignEquipment,
+    equipmentController.assignEquipment
+);
+
+router.put('/return/:id', authMiddleware, rateLimiters.general, equipmentController.returnEquipment);
+router.get('/assigned', authMiddleware, rateLimiters.general, equipmentController.getAssignedEquipment);
+router.get('/borrowing-history', authMiddleware, rateLimiters.general, equipmentController.getBorrowingHistory);
+
 router.get('/user/me', authMiddleware, userController.getUserProfile);
-router.get('/notifications', authMiddleware, userController.getNotificationsForUser);
-router.post('/notifications/send', authMiddleware, isAdmin, userController.sendNotification);
-router.put('/notifications/:id/read', authMiddleware, userController.markNotificationAsRead);
-router.delete('/notifications/:id', authMiddleware, userController.deleteNotification);
+
+router.get('/users', authMiddleware, isAdmin, rateLimiters.general, userController.getAllUsers);
+router.get('/users/:id', authMiddleware, isAdmin, rateLimiters.general, userController.getUserById);
+router.put(
+    '/users/:id',
+    authMiddleware,
+    isAdmin,
+    validatePayloadSize,
+    validators.updateUser,
+    userController.updateUser
+);
+router.delete('/users/:id', authMiddleware, isAdmin, rateLimiters.general, userController.deleteUser);
+
+router.get('/notifications', authMiddleware, rateLimiters.general, userController.getNotificationsForUser);
+router.post('/notifications/send', authMiddleware, isAdmin, rateLimiters.general, userController.sendNotification);
+router.put('/notifications/:id/read', authMiddleware, rateLimiters.general, userController.markNotificationAsRead);
+router.delete('/notifications/:id', authMiddleware, rateLimiters.general, userController.deleteNotification);
 
 module.exports = router;

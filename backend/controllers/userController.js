@@ -2,7 +2,6 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const Notification = require('../models/Notification');
 
-// Register new user
 exports.registerUser = async (req, res) => {
   try {
     const { username, password, role } = req.body;
@@ -19,7 +18,6 @@ exports.registerUser = async (req, res) => {
     let user = new User({ username, password, role });
     await user.save();
 
-    // Generate JWT token using the model method
     const token = await user.generateAuthToken();
 
     res.status(201).json({
@@ -41,7 +39,6 @@ exports.registerUser = async (req, res) => {
   }
 };
 
-// Login user
 exports.loginUser = async (req, res) => {
   try {
     const { username, password } = req.body;
@@ -66,15 +63,14 @@ exports.loginUser = async (req, res) => {
   }
 };
 
-// Get all users (with pagination for admin)
 exports.getAllUsers = async (req, res) => {
   try {
-    const page = parseInt(req.query.page) || 1; // Current page, default to 1
-    const limit = parseInt(req.query.limit) || 10; // Results per page, default to 10
+    const page = parseInt(req.query.page) || 1; 
+    const limit = parseInt(req.query.limit) || 10; 
     const skip = (page - 1) * limit;
 
     const users = await User.find().skip(skip).limit(limit);
-    const totalUsers = await User.countDocuments(); // Total number of users
+    const totalUsers = await User.countDocuments();
 
     res.json({
       users,
@@ -87,21 +83,17 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// usersController.js
 
 exports.getUserProfile = async (req, res) => {
   try {
-    // req.user is set by your auth middleware after verifying the token
     if (!req.user) {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Return user details (excluding sensitive fields like password)
     res.json({
       _id: req.user._id,
       username: req.user.username,
       role: req.user.role,
-      // Include other user details if necessary
     });
   } catch (error) {
     console.error('Error fetching user profile:', error);
@@ -113,15 +105,13 @@ exports.sendNotification = async (req, res) => {
   try {
     const { userId, message } = req.body;
 
-    // Find the user by their ID
-    const user = await User.findById(userId); // Use userId to find the user
+    const user = await User.findById(userId); 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Create and save the notification
     const notification = new Notification({
-      user: user._id, // Store user ID, not username, to maintain relations
+      user: user._id, 
       message,
       date: new Date(),
     });
@@ -129,7 +119,7 @@ exports.sendNotification = async (req, res) => {
 
     res.status(201).json({ message: 'Notification sent!' });
   } catch (error) {
-    console.error('Error sending notification:', error); // Log the error
+    console.error('Error sending notification:', error);
     res.status(500).json({ message: 'Error sending notification', error: error.message });
   }
 };
@@ -145,12 +135,11 @@ exports.getNotificationsForUser = async (req, res) => {
 
 exports.markNotificationAsRead = async (req, res) => {
   try {
-    const { id: notificationId } = req.params; // Extract notificationId from URL params
+    const { id: notificationId } = req.params;
     const userId = req.user._id;
 
     console.log('User ID:', userId);
 
-    // Find the notification by ID and user
     const notification = await Notification.findOne({ _id: notificationId, user: userId });
     console.log('Notification found:', notification);
 
@@ -171,12 +160,11 @@ exports.markNotificationAsRead = async (req, res) => {
 
 exports.deleteNotification = async (req, res) => {
   try {
-    const { id: notificationId } = req.params; // Extract notificationId from the URL params
+    const { id: notificationId } = req.params; 
     const userId = req.user._id;
 
     console.log('User ID:', userId);
 
-    // Find and delete the notification by ID and user
     const notification = await Notification.findOneAndDelete({ _id: notificationId, user: userId });
     console.log('Notification deleted:', notification);
 
@@ -191,7 +179,6 @@ exports.deleteNotification = async (req, res) => {
   }
 };
 
-// Get user by ID
 exports.getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
@@ -204,7 +191,6 @@ exports.getUserById = async (req, res) => {
   }
 };
 
-// Update user details (admin only)
 exports.updateUser = async (req, res) => {
   try {
     const { username, role } = req.body;
@@ -224,7 +210,6 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// Delete user by ID
 exports.deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
@@ -237,8 +222,7 @@ exports.deleteUser = async (req, res) => {
   }
 };
 
-// Logout user
 exports.logoutUser = (req, res) => {
-  // Invalidate the token (client-side will handle token removal)
+
   res.status(200).json({ message: 'Logged out successfully' });
 };

@@ -5,7 +5,7 @@ const { checkIfTokenExpired } = require('../utils/tokenUtils');
 const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.header('Authorization');
-    console.log('Authorization Header:', authHeader);
+    //console.log('Authorization Header:', authHeader);
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       console.error('Authorization header missing or malformed');
@@ -20,9 +20,8 @@ const authMiddleware = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Decoded Token:', decoded);
+    //console.log('Decoded Token:', decoded);
 
-    // Use `decoded.id` instead of `decoded._id` since the token payload contains `id`
     const user = await User.findOne({ _id: decoded.id, 'tokens.token': token });
 
     if (!user) {
