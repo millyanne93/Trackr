@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 const api = axios.create({
     baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3000',
     withCredentials: true,
-    timeout: 15000,
+    timeout: 60000,
     headers: {
         Accept: 'application/json',
     },
