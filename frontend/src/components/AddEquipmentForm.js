@@ -20,9 +20,8 @@ const AddEquipmentForm = () => {
   console.log('Sending data:', newEquipment);
 
   try {
-    const response = await api.post('/api/equipment', newEquipment);
+    await api.post('/api/equipment', newEquipment);
 
-    //console.log('Response data:', response.data);
     setSuccess('Equipment added successfully!');
     setError('');
 

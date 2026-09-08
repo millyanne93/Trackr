@@ -24,8 +24,7 @@ const AssignEquipmentForm = ({ users, equipmentList, onAssign }) => {
 
       console.log('Sending assignment payload:', payload);
 
-      const response = await api.post('/api/assign', payload);
-      //console.log('Assignment response:', response.data);
+      await api.post('/api/assign', payload);
 
       setMessage('✅ Equipment assigned successfully!');
       setSelectedUser('');

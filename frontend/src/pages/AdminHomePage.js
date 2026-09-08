@@ -122,7 +122,7 @@ const AdminHomePage = () => {
     fetchUsername();
     fetchData();
     fetchUsers(currentPage);
-  }, [currentPage]);
+  }, [currentPage, fetchData]);
 
   const handleDeleteEquipment = async (equipmentId) => {
     try {
@@ -131,11 +131,6 @@ const AdminHomePage = () => {
     } catch (error) {
       console.error('Error deleting equipment:', error);
     }
-  };
-
-  const handleEditEquipment = (equipment) => {
-    setEditingEquipment(equipment);
-    setShowEditEquipmentModal(true);
   };
 
   const handleUpdateEquipment = async (e) => {

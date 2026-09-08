@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../services/api';
-import LogoutButton from '../components/LogoutButton';
 import Cookies from 'js-cookie';
-import { FaBox, FaBell, FaHistory, FaArrowRight } from 'react-icons/fa';
+import { FaBox, FaBell, FaHistory } from 'react-icons/fa';
 
 const RegularUserHomePage = () => {
   const [username, setUsername] = useState('');
