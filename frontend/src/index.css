@@ -3,6 +3,15 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Prevent flash of old styles */
+.no-flash {
+  opacity: 0;
+}
+
+.no-flash.ready {
+  opacity: 1;
+  transition: opacity 0.1s;
+}
 
 body {
   margin: 0;

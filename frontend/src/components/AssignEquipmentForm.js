@@ -4,90 +4,123 @@ import api from '../services/api';
 const AssignEquipmentForm = ({ users, equipmentList, onAssign }) => {
   const [selectedUser, setSelectedUser] = useState('');
   const [selectedEquipment, setSelectedEquipment] = useState('');
-  const [returnDate, setReturnDate] = useState('');  // New state for return date
+  const [returnDate, setReturnDate] = useState('');
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState(''); 
 
-  // Function to assign equipment
+  const userArray = Array.isArray(users) ? users : [];
+  const equipmentArray = Array.isArray(equipmentList) ? equipmentList : [];
+
   const assignEquipment = async (equipmentId, userId, returnDate) => {
     try {
       setLoading(true);
-      await api.post('/api/assign', { equipmentId, userId, returnDate }); // Pass returnDate to backend
-      alert('Equipment assigned successfully!');
+      setMessage('');
+
+      const payload = {
+        userId: userId,
+        equipmentId: equipmentId,
+        returnDate: returnDate || null 
+      };
+
+      console.log('Sending assignment payload:', payload);
+
+      const response = await api.post('/api/assign', payload);
+      //console.log('Assignment response:', response.data);
+
+      setMessage('✅ Equipment assigned successfully!');
       setSelectedUser('');
       setSelectedEquipment('');
-      setReturnDate(''); // Clear the return date field
-      onAssign(); // Update the parent component after successful assignment
+      setReturnDate('');
+      if (onAssign) onAssign();
     } catch (error) {
       console.error('Error assigning equipment:', error);
-      alert('Failed to assign equipment.');
+      
+      if (error.response?.data?.message) {
+        setMessage(`❌ ${error.response.data.message}`);
+      } else if (error.response?.data?.errors) {
+        const errors = error.response.data.errors;
+        const errorMessages = errors.map(e => e.message).join(', ');
+        setMessage(`❌ Validation failed: ${errorMessages}`);
+      } else {
+        setMessage('❌ Failed to assign equipment. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  // Handle form submission
   const handleAssign = () => {
-    if (selectedUser && selectedEquipment) {
-      assignEquipment(selectedEquipment, selectedUser, returnDate);  // Pass return date when assigning
-    } else {
-      alert('Please select both a user and equipment.');
+    if (!selectedUser || !selectedEquipment) {
+      setMessage('❌ Please select both a user and equipment.');
+      return;
     }
+    assignEquipment(selectedEquipment, selectedUser, returnDate);
   };
 
   return (
-    <div className="bg-white p-4 rounded shadow mb-6 max-w-lg">
-      <h3 className="text-xl font-semibold">Assign Equipment</h3>
+    <div className="bg-white p-4 rounded shadow mb-6 max-w-lg border border-forest-100">
+      <h3 className="text-xl font-semibold text-ink mb-4">Assign Equipment</h3>
+
+      {message && (
+        <div className={`p-2 rounded mb-4 ${message.includes('✅') ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+          {message}
+        </div>
+      )}
 
       <div className="my-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">User:</label>
+        <label className="block text-sm font-medium text-ink mb-1">User:</label>
         <select
           value={selectedUser}
           onChange={(e) => setSelectedUser(e.target.value)}
-          className="border border-gray-300 p-2 rounded w-full"
+          className="border border-forest-100 p-2 rounded w-full focus:ring-2 focus:ring-forest-500 focus:border-transparent"
         >
           <option value="">Select User</option>
-          {users.map((user) => (
-            <option key={user._id} value={user._id}>
-              {user.username}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="my-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1 ">Equipment:</label>
-        <select
-          value={selectedEquipment}
-          onChange={(e) => setSelectedEquipment(e.target.value)}
-          className="border border-gray-300 p-2 rounded w-full"
-        >
-          <option value="">Select Equipment</option>
-          {Array.isArray(equipmentList) ? (
-            equipmentList.map((equipment) => (
-              <option key={equipment._id} value={equipment._id}>
-                {equipment.name} ({equipment.status})
+          {userArray.length > 0 ? (
+            userArray.map((user) => (
+              <option key={user._id} value={user._id}>
+                {user.username}
               </option>
             ))
           ) : (
-            <option>No equipment available</option>
+            <option value="" disabled>No users available</option>
           )}
         </select>
       </div>
 
       <div className="my-4">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Return Date (Optional):</label>
+        <label className="block text-sm font-medium text-ink mb-1">Equipment:</label>
+        <select
+          value={selectedEquipment}
+          onChange={(e) => setSelectedEquipment(e.target.value)}
+          className="border border-forest-100 p-2 rounded w-full focus:ring-2 focus:ring-forest-500 focus:border-transparent"
+        >
+          <option value="">Select Equipment</option>
+          {equipmentArray.length > 0 ? (
+            equipmentArray.map((equipment) => (
+              <option key={equipment._id} value={equipment._id}>
+                {equipment.name} ({equipment.status})
+              </option>
+            ))
+          ) : (
+            <option value="" disabled>No equipment available</option>
+          )}
+        </select>
+      </div>
+
+      <div className="my-4">
+        <label className="block text-sm font-medium text-ink mb-1">Return Date (Optional):</label>
         <input
           type="date"
           value={returnDate}
           onChange={(e) => setReturnDate(e.target.value)}
-          className="border border-gray-300 p-2 rounded w-full"
+          className="border border-forest-100 p-2 rounded w-full focus:ring-2 focus:ring-forest-500 focus:border-transparent"
         />
       </div>
 
       <button
         onClick={handleAssign}
         disabled={loading}
-        className="bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className="bg-forest-600 hover:bg-forest-700 text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-colors disabled:opacity-50 w-full"
       >
         {loading ? 'Assigning...' : 'Assign Equipment'}
       </button>

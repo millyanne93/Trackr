@@ -1,35 +1,36 @@
 import React from 'react';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const ActivityOverview = ({ activityData, showActivity, setShowActivity }) => {
+  // ✅ Safe fallback
+  const data = Array.isArray(activityData) ? activityData : [];
+
   return (
-    <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
+    <div className="bg-white p-4 rounded shadow mb-6 border border-forest-100">
       <h3
-        className="text-xl font-semibold cursor-pointer hover:text-teal-500"
+        className="text-xl font-semibold cursor-pointer text-ink hover:text-forest-600 flex justify-between items-center"
         onClick={() => setShowActivity(!showActivity)}
       >
-        Activity Overview
+        <span>📊 Activity Overview</span>
+        <span className="text-sm text-ink-muted">{showActivity ? '▲' : '▼'}</span>
       </h3>
-      {showActivity && activityData.length > 0 ? (
-        <LineChart width={500} height={300} data={activityData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="users" stroke="#8884d8" />
-          <Line type="monotone" dataKey="equipment" stroke="#82ca9d" />
-        </LineChart>
-      ) : (
-        <p>No activity data available.</p>
+      {showActivity && (
+        <div className="mt-4">
+          {data.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={data}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="value" fill="#1E6B45" />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-ink-muted">No activity data available.</p>
+          )}
+        </div>
       )}
     </div>
   );

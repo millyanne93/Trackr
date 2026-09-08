@@ -94,7 +94,7 @@ const Pricing = () => {
     <section className="pricing py-20 bg-white relative overflow-hidden">
       {/* Background decorative elements */}
       <div className="absolute top-40 right-20 w-72 h-72 bg-blue-100 rounded-full filter blur-3xl opacity-30 -z-10"></div>
-      <div className="absolute bottom-40 left-20 w-80 h-80 bg-teal-100 rounded-full filter blur-3xl opacity-30 -z-10"></div>
+      <div className="absolute bottom-40 left-20 w-80 h-80 bg-forest-100 rounded-full filter blur-3xl opacity-30 -z-10"></div>
       
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">

@@ -3,14 +3,19 @@ import AddEquipmentForm from '../components/AddEquipmentForm';
 
 const AddEquipmentSection = ({ showAddEquipment, setShowAddEquipment, fetchData }) => {
   return (
-    <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
+    <div className="bg-white p-4 rounded shadow mb-6 border border-forest-100">
       <h3
-        className="text-xl font-semibold cursor-pointer hover:text-teal-500"
+        className="text-xl font-semibold cursor-pointer text-ink hover:text-forest-600 flex justify-between items-center"
         onClick={() => setShowAddEquipment(!showAddEquipment)}
       >
-        Add New Equipment
+        <span>➕ Add New Equipment</span>
+        <span className="text-sm text-ink-muted">{showAddEquipment ? '▲' : '▼'}</span>
       </h3>
-      {showAddEquipment && <AddEquipmentForm onAdd={fetchData} />}
+      {showAddEquipment && (
+        <div className="mt-4">
+          <AddEquipmentForm onAdd={fetchData} />
+        </div>
+      )}
     </div>
   );
 };

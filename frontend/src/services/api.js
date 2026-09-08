@@ -2,15 +2,14 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const api = axios.create({
-    baseURL: 'https://trackr-sooty.vercel.app',
-  withCredentials: true,
-  timeout: 6000,
-  headers: {
-    Accept: 'application/json',
-  },
+    baseURL: process.env.REACT_APP_API_URL || 'http://localhost:3000',
+    withCredentials: true,
+    timeout: 15000,
+    headers: {
+        Accept: 'application/json',
+    },
 });
 
-// Request interceptor to add the token
 api.interceptors.request.use((config) => {
   const token = Cookies.get('token');
   if (token) {
@@ -22,28 +21,50 @@ api.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
-// Response interceptor to handle errors
 api.interceptors.response.use(
-  response => response,
-  error => {
+  (response) => response,
+  async (error) => {
     if (error.response) {
-      if (error.response.status === 401) {
-        console.error('Unauthorized access:', error.response.data.message || 'Session expired. Redirecting to home page.');
-        alert('Session expired. Redirecting to home page.');
+      const { status, data } = error.response;
+
+      if (status === 401) {
+        console.warn('Session expired or unauthorized:', data.message);
 
         Cookies.remove('token');
         localStorage.removeItem('userData');
 
-        setTimeout(() => {
-          window.location.href = '/'; // Redirect to login or home page
-        }, 3000); // 3-second delay
-      } else {
-        console.error('Error:', error.response.data.message || 'An error occurred.');
-        alert(error.response.data.message || 'An error occurred.');
+        alert('Your session has expired. Please log in again.');
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        window.location.href = '/login';
+        return Promise.reject(error);
       }
+
+      if (status === 413) {
+        console.warn('Payload too large:', data.message);
+        alert('The file or data you are trying to upload is too large.');
+        return Promise.reject(error);
+      }
+
+      if (status === 429) {
+        console.warn('Rate limit exceeded:', data.message);
+        alert('Too many requests. Please try again later.');
+        return Promise.reject(error);
+      }
+
+      console.error(`API Error (${status}):`, data.message || 'An error occurred.');
+
+      if (status !== 401) {
+        alert(data.message || 'An error occurred. Please try again.');
+      }
+
+    } else if (error.request) {
+
+      console.error('Network error:', error.message);
+      alert('Network error. Please check your connection and try again.');
     } else {
-      console.error('Error:', error.message);
-      alert(error.message);
+
+      console.error('Unexpected error:', error.message);
+      alert('An unexpected error occurred. Please try again.');
     }
 
     return Promise.reject(error);

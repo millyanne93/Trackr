@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../services/api';
-import LogoutButton from '../components/LogoutButton';
 import SummarySection from '../admin/SummarySection';
 import ActivityOverview from '../admin/ActivityOverview';
 import EquipmentList from '../admin/EquipmentList';
@@ -40,22 +39,32 @@ const AdminHomePage = () => {
 
   const fetchData = useCallback(async () => {
     try {
-      const [summaryRes, activityRes, issuedRes, equipmentRes, usersRes] = await Promise.all([
+      const usersRes = await api.get('/api/users?page=1&limit=100');
+      const [summaryRes, activityRes, issuedEquipmentRes, equipmentRes] = await Promise.all([
         api.get('/api/summary'),
         api.get('/api/activity'),
         api.get('/api/issued'),
         api.get('/api/equipment', { params: { page: currentPage } }),
-        api.get('/api/users'),
       ]);
+
+      const allUsers = usersRes.data?.users || [];
+      setUsers(allUsers);
+
+      const equipmentData = equipmentRes.data;
+      if (Array.isArray(equipmentData)) {
+        setEquipmentList(equipmentData);
+      } else if (equipmentData && equipmentData.equipment) {
+        setEquipmentList(equipmentData.equipment);
+      } else {
+        setEquipmentList([]);
+      }
 
       setSummaryData(summaryRes.data);
       setActivityData(activityRes.data);
-      setIssuedEquipment(issuedRes.data);
-      setEquipmentList(equipmentRes.data);
-      setUsers(usersRes.data);
+      setIssuedEquipment(issuedEquipmentRes.data);
+      setLoading(false);
 
-      // Fetch users for issued equipment
-      const userPromises = issuedRes.data.map(async (equipment) => {
+      const userPromises = issuedEquipmentRes.data.map(async (equipment) => {
         if (equipment.checkedOutBy) {
           try {
             const userRes = await api.get(`/api/users/${equipment.checkedOutBy}`);
@@ -82,9 +91,27 @@ const AdminHomePage = () => {
     }
   }, [currentPage]);
 
+  const fetchUsers = async (page = 1, limit = 10) => {
+    try {
+      const res = await api.get(`/api/users?page=${page}&limit=${limit}`);
+      setUsers(res.data?.users || []);
+      setTotalPages(res.data?.totalPages || 0);
+      setCurrentPage(res.data?.currentPage || 1);
+    } catch (error) {
+      console.error('Error fetching users:', error);
+      setUsers([]);
+      setTotalPages(0);
+    }
+  };
+
   const fetchUsername = async () => {
     try {
-      const response = await api.get('/api/user/me');
+      const token = localStorage.getItem('token');
+      const response = await api.get('/api/user/me', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
       setUsername(response.data.username);
     } catch (error) {
       console.error('Error fetching username:', error);
@@ -94,7 +121,8 @@ const AdminHomePage = () => {
   useEffect(() => {
     fetchUsername();
     fetchData();
-  }, [currentPage, fetchData]);
+    fetchUsers(currentPage);
+  }, [currentPage]);
 
   const handleDeleteEquipment = async (equipmentId) => {
     try {
@@ -127,7 +155,7 @@ const AdminHomePage = () => {
   const handleDeleteUser = async (userId) => {
     try {
       await api.delete(`/api/users/${userId}`);
-      fetchData();
+      fetchUsers(currentPage);
     } catch (error) {
       console.error('Error deleting user:', error);
     }
@@ -146,7 +174,7 @@ const AdminHomePage = () => {
         role: editingUser.role,
       });
       setShowEditUserModal(false);
-      fetchData();
+      fetchUsers(currentPage);
     } catch (error) {
       console.error('Error updating user:', error);
     }
@@ -159,33 +187,75 @@ const AdminHomePage = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="admin-home-page bg-gray-100 min-h-screen">
-      <header className="bg-teal-600 text-white p-6 text-center shadow-md">
+    <div className="admin-home-page bg-forest-50 min-h-screen"> 
+      <header className="bg-forest-600 text-white p-6 text-center shadow-md">
         <h1 className="text-3xl font-bold">Welcome, {username}</h1>
-        <LogoutButton />
       </header>
 
       <div className="flex">
         <nav className="bg-white shadow-md p-6 w-64 space-y-4">
-          <button className="block w-full bg-teal-500 text-white py-2 px-4 rounded-md" onClick={() => setShowSummary(!showSummary)}>Summary</button>
-          <button className="block w-full bg-blue-500 text-white py-2 px-4 rounded-md" onClick={() => setShowActivity(!showActivity)}>Activity Overview</button>
-          <button className="block w-full bg-green-500 text-white py-2 px-4 rounded-md" onClick={() => setShowEquipmentList(!showEquipmentList)}>Equipment List</button>
-          <button className="block w-full bg-purple-500 text-white py-2 px-4 rounded-md" onClick={() => setShowIssuedEquipment(!showIssuedEquipment)}>Issued Equipment</button>
-          <button className="block w-full bg-yellow-500 text-white py-2 px-4 rounded-md" onClick={() => setShowSendNotification(!showSendNotification)}>Send Notification</button>
-          <button className="block w-full bg-pink-500 text-white py-2 px-4 rounded-md" onClick={() => setShowAddEquipment(!showAddEquipment)}>Add Equipment</button>
-          <button className="block w-full bg-indigo-500 text-white py-2 px-4 rounded-md" onClick={() => setShowAssignEquipment(!showAssignEquipment)}>Assign Equipment</button>
-          <button className="block w-full bg-red-500 text-white py-2 px-4 rounded-md" onClick={() => setShowUserManagement(!showUserManagement)}>User Management</button>
+          <button 
+            className="block w-full bg-forest-600 text-white py-2 px-4 rounded-md hover:bg-forest-700 transition-colors" 
+            onClick={() => setShowSummary(!showSummary)}
+          >
+            Summary
+          </button>
+          <button 
+            className="block w-full bg-forest-600 text-white py-2 px-4 rounded-md hover:bg-forest-700 transition-colors" 
+            onClick={() => setShowActivity(!showActivity)}
+          >
+            Activity Overview
+          </button>
+          <button 
+            className="block w-full bg-forest-600 text-white py-2 px-4 rounded-md hover:bg-forest-700 transition-colors" 
+            onClick={() => setShowEquipmentList(!showEquipmentList)}
+          >
+            Equipment List
+          </button>
+          <button 
+            className="block w-full bg-forest-600 text-white py-2 px-4 rounded-md hover:bg-forest-700 transition-colors" 
+            onClick={() => setShowIssuedEquipment(!showIssuedEquipment)}
+          >
+            Issued Equipment
+          </button>
+          <button 
+            className="block w-full bg-forest-600 text-white py-2 px-4 rounded-md hover:bg-forest-700 transition-colors" 
+            onClick={() => setShowSendNotification(!showSendNotification)}
+          >
+            Send Notification
+          </button>
+          <button 
+            className="block w-full bg-forest-600 text-white py-2 px-4 rounded-md hover:bg-forest-700 transition-colors" 
+            onClick={() => setShowAddEquipment(!showAddEquipment)}
+          >
+            Add Equipment
+          </button>
+          <button 
+            className="block w-full bg-forest-600 text-white py-2 px-4 rounded-md hover:bg-forest-700 transition-colors" 
+            onClick={() => setShowAssignEquipment(!showAssignEquipment)}
+          >
+            Assign Equipment
+          </button>
+          <button 
+            className="block w-full bg-forest-600 text-white py-2 px-4 rounded-md hover:bg-forest-700 transition-colors" 
+            onClick={() => setShowUserManagement(!showUserManagement)}
+          >
+            User Management
+          </button>
         </nav>
 
         <main className="flex-grow p-8">
-          {showSummary && <SummarySection data={summaryData} showSummary={showSummary} setShowSummary={setShowSummary} />}
-          {showActivity && <ActivityOverview data={activityData} showActivity={showActivity} setShowActivity={setShowActivity} />}
+          {showSummary && <SummarySection summaryData={summaryData} showSummary={showSummary} setShowSummary={setShowSummary} />}
+          {showActivity && <ActivityOverview activityData={activityData} showActivity={showActivity} setShowActivity={setShowActivity} />}
           {showEquipmentList && (
             <EquipmentList
-              equipment={equipmentList}
+              equipmentList={equipmentList}
               showEquipmentList={showEquipmentList}
               setShowEquipmentList={setShowEquipmentList}
-              handleEditEquipment={handleEditEquipment}
+              handleEditEquipment={(equipment) => {
+                setEditingEquipment(equipment);
+                setShowEditEquipmentModal(true);
+              }}
               handleDeleteEquipment={handleDeleteEquipment}
               totalPages={totalPages}
               currentPage={currentPage}
@@ -194,8 +264,8 @@ const AdminHomePage = () => {
           )}
           {showIssuedEquipment && (
             <IssuedEquipment
-              equipment={issuedEquipment}
-              users={issuedEquipmentUsers}
+              issuedEquipment={issuedEquipment} 
+              issuedEquipmentUsers={issuedEquipmentUsers} 
               showIssuedEquipment={showIssuedEquipment}
               setShowIssuedEquipment={setShowIssuedEquipment}
             />
@@ -213,7 +283,7 @@ const AdminHomePage = () => {
           )}
           {showUserManagement && (
             <UserManagementSection
-              users={users}
+              users={users || []} 
               showUserManagement={showUserManagement}
               setShowUserManagement={setShowUserManagement}
               handleEditUser={handleEditUser}

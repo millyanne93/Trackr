@@ -63,7 +63,7 @@ const Features = () => {
   return (
     <div className="relative bg-white py-20 px-4 overflow-hidden">
       {/* Background decorative elements */}
-      <div className="absolute top-20 right-0 w-64 h-64 bg-teal-100 rounded-full filter blur-3xl opacity-40"></div>
+      <div className="absolute top-20 right-0 w-64 h-64 bg-forest-100 rounded-full filter blur-3xl opacity-40"></div>
       <div className="absolute bottom-40 left-0 w-80 h-80 bg-blue-100 rounded-full filter blur-3xl opacity-30"></div>
       
       {/* Title Section with gradient text */}
@@ -128,22 +128,22 @@ const Features = () => {
         viewport={{ once: true }}
         transition={{ duration: 0.7 }}
       >
-        <h2 className="text-3xl font-bold text-teal-700 mb-8 text-center">Why Choose Trackr Features?</h2>
+        <h2 className="text-3xl font-bold text-forest-700 mb-8 text-center">Why Choose Trackr Features?</h2>
         <div className="grid md:grid-cols-2 gap-8">
           <div className="bg-white p-6 rounded-xl shadow-md">
-            <h3 className="text-xl font-semibold text-teal-600 mb-3">Built For Teams</h3>
+            <h3 className="text-xl font-semibold text-forest-600 mb-3">Built For Teams</h3>
             <p className="text-gray-700">Our collaborative features allow seamless communication between team members, ensuring everyone stays informed about equipment status.</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md">
-            <h3 className="text-xl font-semibold text-teal-600 mb-3">Enterprise-Grade Security</h3>
+            <h3 className="text-xl font-semibold text-forest-600 mb-3">Enterprise-Grade Security</h3>
             <p className="text-gray-700">Rest easy knowing your data is protected with our top-tier security protocols and regular backups.</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md">
-            <h3 className="text-xl font-semibold text-teal-600 mb-3">Continuous Updates</h3>
+            <h3 className="text-xl font-semibold text-forest-600 mb-3">Continuous Updates</h3>
             <p className="text-gray-700">We're constantly improving our platform with new features and enhancements based on user feedback.</p>
           </div>
           <div className="bg-white p-6 rounded-xl shadow-md">
-            <h3 className="text-xl font-semibold text-teal-600 mb-3">Seamless Integration</h3>
+            <h3 className="text-xl font-semibold text-forest-600 mb-3">Seamless Integration</h3>
             <p className="text-gray-700">Connect Trackr with your existing tools through our API and ready-made integrations with popular platforms.</p>
           </div>
         </div>

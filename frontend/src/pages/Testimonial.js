@@ -33,7 +33,7 @@ const testimonials = [
 const Testimonials = () => {
   return (
     <section className="testimonials bg-white py-16 overflow-hidden">
-      <h2 className="text-teal-600 text-4xl font-bold text-center mb-8">
+      <h2 className="text-forest-600 text-4xl font-bold text-center mb-8">
         What Our Users Say
       </h2>
 
@@ -55,7 +55,7 @@ const Testimonials = () => {
             >
               <FontAwesomeIcon icon={faUser} className="text-teal text-3xl" />
               <div>
-                <h3 className="text-teal-900 font-semibold">{testimonial.name}</h3>
+                <h3 className="text-forest-900 font-semibold">{testimonial.name}</h3>
                 <p className="text-gray-900">{testimonial.review}</p>
                 <div className="text-yellow-400">
                   {'★'.repeat(testimonial.rating)}

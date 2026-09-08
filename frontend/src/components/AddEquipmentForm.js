@@ -20,29 +20,25 @@ const AddEquipmentForm = () => {
   console.log('Sending data:', newEquipment);
 
   try {
-    // Using axios, which automatically throws on non-2xx status codes
     const response = await api.post('/api/equipment', newEquipment);
 
-    console.log('Response data:', response.data);
+    //console.log('Response data:', response.data);
     setSuccess('Equipment added successfully!');
     setError('');
 
-    // Clear the form fields
     setName('');
     setDescription('');
     setSerialNumber('');
   } catch (error) {
     console.error('Error:', error);
 
-    // Handle the axios error object
     if (error.response) {
-      // Server responded with a status other than 2xx
       setError(`Failed to add equipment: ${error.response.data.message}`);
     } else if (error.request) {
-      // Request was made but no response received
+      
       setError('Failed to add equipment: No response from server.');
     } else {
-      // Something else caused the error
+      
       setError(`Failed to add equipment: ${error.message}`);
     }
     setSuccess('');
@@ -97,7 +93,7 @@ const AddEquipmentForm = () => {
       </div>
       <button
         type="submit"
-        className="bg-teal-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        className="bg-forest-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
       >
         Add Equipment
       </button>

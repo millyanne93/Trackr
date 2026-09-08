@@ -6,14 +6,19 @@ const SendNotificationSection = ({
   setShowSendNotification,
 }) => {
   return (
-    <div className="bg-gradient-to-r from-teal-200 to-teal-100 p-4 rounded shadow mb-6">
+    <div className="bg-white p-4 rounded shadow mb-6 border border-forest-100">
       <h3
-        className="text-xl font-semibold cursor-pointer hover:text-teal-500"
+        className="text-xl font-semibold cursor-pointer text-ink hover:text-forest-600 flex justify-between items-center"
         onClick={() => setShowSendNotification(!showSendNotification)}
       >
-        Send Notification
+        <span>📧 Send Notification</span>
+        <span className="text-sm text-ink-muted">{showSendNotification ? '▲' : '▼'}</span>
       </h3>
-      {showSendNotification && <SendNotification />}
+      {showSendNotification && (
+        <div className="mt-4">
+          <SendNotification />
+        </div>
+      )}
     </div>
   );
 };

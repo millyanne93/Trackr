@@ -28,7 +28,7 @@ const FAQ = () => {
 
   return (
     <section className="faq py-16 bg-white">
-      <h2 className="text-teal-600 text-4xl font-bold text-center mb-8">Frequently Asked Questions</h2>
+      <h2 className="text-forest-600 text-4xl font-bold text-center mb-8">Frequently Asked Questions</h2>
       <div className="container mx-auto space-y-6">
         {faqs.map((faq, index) => (
           <div
@@ -37,12 +37,12 @@ const FAQ = () => {
           >
             {/* Question */}
             <div
-              className="p-4 bg-gradient-to-r from-teal-300 to-teal-100 cursor-pointer flex justify-between items-center"
+              className="p-4 bg-forest-600 cursor-pointer flex justify-between items-center"
               onClick={() => toggleAnswer(index)}
             >
-              <h3 className="text-teal-700 font-semibold text-lg">{faq.question}</h3>
+              <h3 className="text-forest-700 font-semibold text-lg">{faq.question}</h3>
               <motion.span
-                className="text-teal-700 font-bold"
+                className="text-forest-700 font-bold"
                 initial={{ rotate: 0 }}
                 animate={{ rotate: activeIndex === index ? 180 : 0 }}
                 transition={{ duration: 0.2 }}
